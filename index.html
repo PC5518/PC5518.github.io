@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>[Your Name] | Personal Portfolio</title>
-    <meta name="description" content="Personal portfolio of [Your Name], showcasing projects in Python, Data Science, and Application Development.">
+    <title>Aditya N Singh | Personal Portfolio</title>
+    <meta name="description" content="Personal portfolio of Aditya N Singh, showcasing projects and tutorials in Python, Data Science, and Application Development.">
     
     <!-- Google Fonts: Poppins for a modern look -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -366,6 +366,94 @@
             background: var(--border-color);
             color: var(--text-color);
         }
+        
+        /* YouTube Section */
+        .youtube-intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem auto;
+        }
+        .youtube-intro img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 1rem;
+            border: 3px solid var(--primary-color);
+        }
+        .youtube-intro h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .youtube-intro p {
+            color: var(--text-muted-color);
+            margin-bottom: 2rem;
+        }
+        
+        .youtube-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .video-card {
+            background: var(--surface-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        .video-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .video-thumbnail {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background-size: cover;
+            background-position: center;
+        }
+        .video-thumbnail::before {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 0 15px rgba(0,0,0,0.7);
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .video-card:hover .video-thumbnail::before {
+            transform: translate(-50%, -50%) scale(1.2);
+            color: #fff;
+        }
+        
+        .video-info {
+            padding: 1rem;
+        }
+        .video-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            height: 4.5em; /* Reserve space for about 3 lines of text */
+            overflow: hidden;
+        }
+        .video-link {
+            display: block;
+            text-align: center;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.6rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .video-link:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
 
         /* Contact Section */
         .contact-content {
@@ -477,11 +565,12 @@
     <!-- Header -->
     <header class="header">
         <div class="container nav">
-            <a href="#home" class="nav-logo">[Your Name]<span>.</span></a>
+            <a href="#home" class="nav-logo">Aditya<span>.</span></a>
             <ul class="nav-list">
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
+                <li><a href="#youtube" class="nav-link">YouTube</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
             <button class="nav-toggle" aria-label="Toggle navigation">
@@ -496,7 +585,7 @@
         <!-- Home Section -->
         <section id="home">
             <div class="container home-content fade-in">
-                <h1>Hi, I'm <span id="name-span">[Your Name]</span></h1>
+                <h1>Hi, I'm <span id="name-span">Aditya N Singh</span></h1>
                 <p class="typewriter-text" id="typewriter"></p>
                 <p>I build high-performance applications and data-driven solutions. From real-time financial terminals to machine learning models, I love bringing complex ideas to life with code.</p>
                 <a href="#projects" class="btn">View My Work</a>
@@ -510,26 +599,26 @@
                     <h2>About Me</h2>
                 </div>
                 <div class="about-grid fade-in">
-                    <img src="https://via.placeholder.com/300x300.png?text=Your+Photo" alt="[Your Name]" class="about-image" id="profile-photo">
+                    <img src="https://via.placeholder.com/300x300.png?text=Your+Photo" alt="Aditya N Singh" class="about-image" id="profile-photo">
                     <div class="about-text">
-                        <h3>A Passionate Developer & Problem Solver</h3>
+                        <h3>A Passionate Developer & Educator</h3>
                         <p>
-                            I'm a self-driven developer with a strong foundation in Python and a keen interest in data science, machine learning, and application development. My journey began with a curiosity for how technology can solve real-world problems, which led me to create tools for everything from health tracking during a personal illness to visualizing complex mathematical concepts. 
+                            I'm a self-driven developer with a strong foundation in Python and a keen interest in data science, machine learning, and application development. My journey began with a curiosity for how technology can solve real-world problems, which led me to create tools for everything from health tracking to visualizing complex mathematical concepts.
                         </p>
                         <p>
-                            I thrive on building from the ground up, whether it's a lightweight screen recorder or a custom stock market index. I'm always eager to learn new technologies and apply them to create efficient, insightful, and useful software.
+                            Beyond building, I'm passionate about sharing knowledge. On my YouTube channel, PyCraftAICentral, I break down advanced topics in mathematics, data science, and programming to help others learn and grow. I thrive on building from the ground up and empowering others to do the same.
                         </p>
                         <div class="skills-list">
                             <span class="skill-item">Python</span>
                             <span class="skill-item">Data Science</span>
                             <span class="skill-item">Machine Learning</span>
+                            <span class="skill-item">Mathematics</span>
+                            <span class="skill-item">Numpy & Pandas</span>
                             <span class="skill-item">Matplotlib</span>
-                            <span class="skill-item">Pandas</span>
                             <span class="skill-item">Scikit-learn</span>
-                            <span class="skill-item">PyQt6</span>
-                            <span class="skill-item">OpenCV</span>
+                            <span class="skill-item">PyQt6 & OpenCV</span>
+                            <span class="skill-item">Selenium</span>
                             <span class="skill-item">TypeScript</span>
-                            <span class="skill-item">GitHub</span>
                         </div>
                     </div>
                 </div>
@@ -557,6 +646,58 @@
             </div>
         </section>
 
+        <!-- YouTube Content Section -->
+        <section id="youtube">
+            <div class="container">
+                <div class="section-header fade-in">
+                    <h2>My YouTube Channel</h2>
+                </div>
+                <div class="youtube-intro fade-in">
+                    <!-- TO DO: Replace this src with your actual channel logo URL -->
+                    <img src="https://yt3.googleusercontent.com/h5T2O0f3aWWTc7b2pP3hWac9nB8o8z-A82bYg0i0iK7L-eJk6-cpvTz0-A-Qc8M2C6b8_b4e=s176-c-k-c0x00ffffff-no-rj" alt="PyCraftAICentral Logo">
+                    <h3>PyCraftAICentral</h3>
+                    <p>
+                        A hub for exploring the depths of Python, data science, machine learning, and the beautiful mathematics that underpins it all. I create tutorials, solve challenging problems, and share my development journey.
+                    </p>
+                    <a href="https://www.youtube.com/@PyCraftAICentral" target="_blank" class="btn">Visit Channel</a>
+                </div>
+                <div class="youtube-grid fade-in">
+                    <!-- Featured Video 1: App Demo -->
+                    <div class="video-card">
+                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/UjL1t3Ca-b0/maxresdefault.jpg');"></div>
+                        <div class="video-info">
+                            <h4>Fever-Tracke-Logger-Plotter-App Demo</h4>
+                            <a href="https://www.youtube.com/watch?v=UjL1t3Ca-b0" target="_blank" class="video-link">Watch Now</a>
+                        </div>
+                    </div>
+                    <!-- Featured Video 2: Data Science -->
+                    <div class="video-card">
+                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/qfDsg9H-p8I/maxresdefault.jpg');"></div>
+                        <div class="video-info">
+                            <h4>Numpy-2: Basics of (2D) Array and Linear Algebra Matrix Calculation</h4>
+                            <a href="https://www.youtube.com/watch?v=qfDsg9H-p8I" target="_blank" class="video-link">Watch Now</a>
+                        </div>
+                    </div>
+                    <!-- Featured Video 3: Advanced Math -->
+                    <div class="video-card">
+                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/s0m5p_iiVOk/maxresdefault.jpg');"></div>
+                        <div class="video-info">
+                            <h4>Solving FULL MIT integration Bee 2025 Qualifiers</h4>
+                            <a href="https://www.youtube.com/watch?v=s0m5p_iiVOk" target="_blank" class="video-link">Watch Now</a>
+                        </div>
+                    </div>
+                    <!-- Featured Video 4: Automation -->
+                    <div class="video-card">
+                         <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/0EwV2_fE4u4/maxresdefault.jpg');"></div>
+                        <div class="video-info">
+                            <h4>PYTHON BASICS: SOLVING Selenium Test Case 1: Register User</h4>
+                            <a href="https://www.youtube.com/watch?v=0EwV2_fE4u4" target="_blank" class="video-link">Watch Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
         <!-- Contact Section -->
         <section id="contact">
             <div class="container">
@@ -568,7 +709,7 @@
                         I'm always open to discussing new projects, creative ideas, or opportunities to be part of an amazing team. Feel free to reach out!
                     </p>
                     <div class="contact-methods">
-                        <a href="mailto:your.email@example.com">Email</a>
+                        <a href="mailto:adityansdsdc@outlook.com">Email</a>
                         <a href="https://github.com/PC5518" target="_blank">GitHub</a>
                         <a href="https://linkedin.com/in/your-profile" target="_blank">LinkedIn</a>
                     </div>
@@ -580,7 +721,7 @@
     <!-- Footer -->
     <footer>
         <div class="container">
-            <p>&copy; 2024 [Your Name]. All Rights Reserved.</p>
+            <p>&copy; 2024 Aditya N Singh. All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -588,8 +729,6 @@
     document.addEventListener('DOMContentLoaded', function() {
         
         // --- Project Data ---
-        // I have parsed and categorized your projects here.
-        // You can easily add, remove, or edit projects in this list.
         const projects = [
             {
                 title: "AnsCom Terminal - Equity MarketOS",
@@ -716,7 +855,7 @@
 
         // --- Typewriter Effect ---
         const typewriterEl = document.getElementById('typewriter');
-        const roles = ["Python Developer", "Data Scientist", "Application Builder", "Problem Solver"];
+        const roles = ["Python Developer", "Data Scientist", "Educator", "Problem Solver"];
         let roleIndex = 0;
         let charIndex = 0;
         let isDeleting = false;
