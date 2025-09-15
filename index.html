@@ -11,7 +11,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Favicon (replace with your own) -->
+    <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
 
     <style>
@@ -367,26 +367,47 @@
             color: var(--text-color);
         }
         
-        /* YouTube Section */
-        .youtube-intro {
-            text-align: center;
-            max-width: 800px;
-            margin: 0 auto 4rem auto;
+        /* START: NEW NON-PROFIT YOUTUBE SECTION STYLES */
+        #nonprofit-youtube .nonprofit-intro-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
         }
-        .youtube-intro img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 1rem;
-            border: 3px solid var(--primary-color);
-        }
-        .youtube-intro h3 {
+        #nonprofit-youtube .intro-text h3 {
             font-size: 2rem;
-            margin-bottom: 0.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
         }
-        .youtube-intro p {
+        #nonprofit-youtube .intro-text p {
             color: var(--text-muted-color);
-            margin-bottom: 2rem;
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        
+        #nonprofit-youtube .intro-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        #nonprofit-youtube .stat-card {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        #nonprofit-youtube .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            line-height: 1;
+        }
+        #nonprofit-youtube .stat-card .stat-label {
+            font-size: 1rem;
+            color: var(--text-muted-color);
+            margin-top: 0.5rem;
         }
         
         .youtube-grid {
@@ -402,18 +423,21 @@
             box-shadow: var(--card-shadow);
             transition: transform 0.3s ease;
             border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
         }
         .video-card:hover {
             transform: translateY(-10px);
         }
         
-        .video-thumbnail {
+        .video-thumbnail-link {
+            display: block;
             position: relative;
             padding-top: 56.25%; /* 16:9 Aspect Ratio */
             background-size: cover;
             background-position: center;
         }
-        .video-thumbnail::before {
+        .video-thumbnail-link::before {
             content: '▶';
             position: absolute;
             top: 50%;
@@ -424,19 +448,29 @@
             text-shadow: 0 0 15px rgba(0,0,0,0.7);
             transition: transform 0.3s ease, color 0.3s ease;
         }
-        .video-card:hover .video-thumbnail::before {
+        .video-card:hover .video-thumbnail-link::before {
             transform: translate(-50%, -50%) scale(1.2);
             color: #fff;
         }
         
         .video-info {
             padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
         .video-info h4 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+            flex-grow: 1;
+            min-height: 3.3em; /* Reserve space for about 2 lines */
+        }
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted-color);
             margin-bottom: 1rem;
-            height: 4.5em; /* Reserve space for about 3 lines of text */
-            overflow: hidden;
         }
         .video-link {
             display: block;
@@ -449,11 +483,17 @@
             text-decoration: none;
             font-weight: 600;
             transition: all 0.3s ease;
+            margin-top: auto;
         }
         .video-link:hover {
             background: var(--primary-color);
             color: #fff;
         }
+        .view-all-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        /* END: NEW NON-PROFIT YOUTUBE SECTION STYLES */
 
         /* Contact Section */
         .contact-content {
@@ -514,6 +554,13 @@
             .about-image {
                 margin-bottom: 2rem;
             }
+            #nonprofit-youtube .nonprofit-intro-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            #nonprofit-youtube .intro-text p {
+                margin: 0 auto;
+            }
         }
         
         @media (max-width: 768px) {
@@ -570,7 +617,7 @@
                 <li><a href="#home" class="nav-link active">Home</a></li>
                 <li><a href="#about" class="nav-link">About</a></li>
                 <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#youtube" class="nav-link">YouTube</a></li>
+                <li><a href="#nonprofit-youtube" class="nav-link">YouTube</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
             </ul>
             <button class="nav-toggle" aria-label="Toggle navigation">
@@ -646,57 +693,44 @@
             </div>
         </section>
 
-        <!-- YouTube Content Section -->
-        <section id="youtube">
+        <!-- START: New Non-Profit YouTube Section -->
+        <section id="nonprofit-youtube">
             <div class="container">
                 <div class="section-header fade-in">
-                    <h2>My YouTube Channel</h2>
+                    <h2>Our STEM Non-Profit: PyCraftAICentral</h2>
                 </div>
-                <div class="youtube-intro fade-in">
-                    <!-- TO DO: Replace this src with your actual channel logo URL -->
-                    <img src="https://yt3.googleusercontent.com/h5T2O0f3aWWTc7b2pP3hWac9nB8o8z-A82bYg0i0iK7L-eJk6-cpvTz0-A-Qc8M2C6b8_b4e=s176-c-k-c0x00ffffff-no-rj" alt="PyCraftAICentral Logo">
-                    <h3>PyCraftAICentral</h3>
-                    <p>
-                        A hub for exploring the depths of Python, data science, machine learning, and the beautiful mathematics that underpins it all. I create tutorials, solve challenging problems, and share my development journey.
-                    </p>
-                    <a href="https://www.youtube.com/@PyCraftAICentral" target="_blank" class="btn">Visit Channel</a>
+
+                <div class="nonprofit-intro-grid fade-in">
+                    <div class="intro-text">
+                        <h3>Making Complex STEM Accessible to Everyone</h3>
+                        <p>
+                            PyCraftAICentral is my commitment to providing free, high-quality education in STEM. We create in-depth tutorials and problem-solving guides on Python programming, data science, machine learning, and the advanced mathematics that powers it all. Our mission is to break down barriers and empower learners worldwide to build amazing things with technology.
+                        </p>
+                    </div>
+                    <div class="intro-stats">
+                        <div class="stat-card">
+                            <div id="total-videos" class="stat-number">0</div>
+                            <div class="stat-label">Total Videos</div>
+                        </div>
+                        <div class="stat-card">
+                            <div id="total-views" class="stat-number">0</div>
+                            <div class="stat-label">Total Views</div>
+                        </div>
+                    </div>
                 </div>
-                <div class="youtube-grid fade-in">
-                    <!-- Featured Video 1: App Demo -->
-                    <div class="video-card">
-                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/UjL1t3Ca-b0/maxresdefault.jpg');"></div>
-                        <div class="video-info">
-                            <h4>Fever-Tracke-Logger-Plotter-App Demo</h4>
-                            <a href="https://www.youtube.com/watch?v=UjL1t3Ca-b0" target="_blank" class="video-link">Watch Now</a>
-                        </div>
-                    </div>
-                    <!-- Featured Video 2: Data Science -->
-                    <div class="video-card">
-                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/qfDsg9H-p8I/maxresdefault.jpg');"></div>
-                        <div class="video-info">
-                            <h4>Numpy-2: Basics of (2D) Array and Linear Algebra Matrix Calculation</h4>
-                            <a href="https://www.youtube.com/watch?v=qfDsg9H-p8I" target="_blank" class="video-link">Watch Now</a>
-                        </div>
-                    </div>
-                    <!-- Featured Video 3: Advanced Math -->
-                    <div class="video-card">
-                        <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/s0m5p_iiVOk/maxresdefault.jpg');"></div>
-                        <div class="video-info">
-                            <h4>Solving FULL MIT integration Bee 2025 Qualifiers</h4>
-                            <a href="https://www.youtube.com/watch?v=s0m5p_iiVOk" target="_blank" class="video-link">Watch Now</a>
-                        </div>
-                    </div>
-                    <!-- Featured Video 4: Automation -->
-                    <div class="video-card">
-                         <div class="video-thumbnail" style="background-image: url('https://img.youtube.com/vi/0EwV2_fE4u4/maxresdefault.jpg');"></div>
-                        <div class="video-info">
-                            <h4>PYTHON BASICS: SOLVING Selenium Test Case 1: Register User</h4>
-                            <a href="https://www.youtube.com/watch?v=0EwV2_fE4u4" target="_blank" class="video-link">Watch Now</a>
-                        </div>
-                    </div>
+                
+                <h3 style="text-align: center; font-size: 1.8rem; margin-bottom: 3rem; color: var(--text-color);" class="fade-in">Latest Videos</h3>
+
+                <div class="youtube-grid fade-in" id="youtube-grid">
+                    <!-- YouTube videos will be dynamically inserted here -->
+                </div>
+
+                <div class="view-all-container fade-in" id="view-all-videos-container">
+                    <button class="btn" id="view-all-videos-btn">Show All Videos</button>
                 </div>
             </div>
         </section>
+        <!-- END: New Non-Profit YouTube Section -->
         
         <!-- Contact Section -->
         <section id="contact">
@@ -812,6 +846,122 @@
             },
         ];
 
+        // --- START: YouTube Video Data and Functions ---
+        const youtubeVideos = [
+            { title: "Fever-Tracke-Logger-Plotter-App Demo", link: "https://www.youtube.com/watch?v=trcBuDE0DSM", views: 5, uploadDate: 20250902 },
+            { title: "Numpy-2: Basics of (2D) Array and Linear Algebra Matrix Calculation using python numpy | Pre-ML", link: "https://www.youtube.com/watch?v=Hvme2CVd1i0", views: 149, uploadDate: 20250718 },
+            { title: "Numpy-1: Basics of (1D) Array | Pre-Machine Learning", link: "https://www.youtube.com/watch?v=qD3UTaIYOEs", views: 24, uploadDate: 20250718 },
+            { title: "MIT INTEGRATION BEE FINALS 2025 QUESTION 1 ∫ tan(x) * sqrt(2 + sqrt(4 + cos(x))) dx", link: "https://www.youtube.com/watch?v=Oihk2zS_aE4", views: 45, uploadDate: 20250527 },
+            { title: "MIT INTEGRATION BEE FINAL 2025 QUESTION NUMBER 2 ∫₀^∞ dx / ( (x + 1 + ⌊2√x⌋)² )", link: "https://www.youtube.com/watch?v=jJuJUQfXyKc", views: 27, uploadDate: 20250527 },
+            { title: "Solving FULL MIT integration Bee 2025 Qualifiers", link: "https://www.youtube.com/watch?v=dkZmTvZ5084", views: 27, uploadDate: 20250521 },
+            { title: "integral of lnx /x^2+49 dx from 0 to infinity", link: "https://www.youtube.com/watch?v=DCSsrvhlbzw", views: 9, uploadDate: 20250518 },
+            { title: "Understanding Leibnitz Rule multivariable Differentiation under Integral Sign", link: "https://www.youtube.com/watch?v=ehn7mt0HaRI", views: 11, uploadDate: 20250518 },
+            { title: "Simplest Proof of Gaussian Integral using Gamma's Function", link: "https://www.youtube.com/watch?v=t4K5pUk2jDg", views: 10, uploadDate: 20250518 },
+            { title: "SOLVING FULL MIT Integration BEE Qualifiers 2023", link: "https://www.youtube.com/watch?v=G5r3HYy0dIo", views: 112, uploadDate: 20250518 },
+            { title: "Gamma's Function Full Analysis", link: "https://www.youtube.com/watch?v=WFBdKmvBXIQ", views: 49, uploadDate: 20250517 },
+            { title: "Summary for Introduction to Machine Learning with Python:by Andreas C. Muller and Sarah Guido", link: "https://www.youtube.com/watch?v=hB5I5FMABGI", views: 19, uploadDate: 20250429 },
+            { title: "SOLVING MIT Integration Bee Qualifying Exam 21 January 2025", link: "https://www.youtube.com/watch?v=PBTKrdzaOoI", views: 28, uploadDate: 20250427 },
+            { title: "∫ dx / (x⁸ - x⁶)", link: "https://www.youtube.com/watch?v=b_t9XryqcA4", views: 14, uploadDate: 20250427 },
+            { title: "∫ from 0 to 1 of (x²) / √(x(1 - x)) dx", link: "https://www.youtube.com/watch?v=80NzqDd_l6k", views: 15, uploadDate: 20250427 },
+            { title: "∫ from -π/2 to π/2 of √(sec(x) - cos(x)) dx", link: "https://www.youtube.com/watch?v=b1MulM7mslc", views: 7, uploadDate: 20250427 },
+            { title: "∫(arctanx-tanx)/(1-x+x^2-x^3)dx Lightning round problem one.", link: "https://www.youtube.com/watch?v=bseCbBGiLbM", views: 8, uploadDate: 20250427 },
+            { title: "∫(2,0)floor(e^x)dx", link: "https://www.youtube.com/watch?v=yOV7qgy1QjE", views: 14, uploadDate: 20250427 },
+            { title: "MIT INTEGRATION BEE ∫(infinite,1)x^5e^-xdx", link: "https://www.youtube.com/watch?v=PmuVfx_ZVtA", views: 10, uploadDate: 20250427 },
+            { title: "MIT Integration BEE-2024 Qualifying Round. Complete Solutions . Question Solving", link: "https://www.youtube.com/watch?v=F3DgxXoW5iw", views: 59, uploadDate: 20250425 },
+            { title: "How to get a Rough Estimate for profit in stocks over a Range of Duration without using any API", link: "https://www.youtube.com/watch?v=uQbb6UwfN_I", views: 5, uploadDate: 20241217 },
+            { title: "Creating Pie Chart Using MatPlotLib and Python | Data Visualisation using Python |", link: "https://www.youtube.com/watch?v=1U64wo0qXoI", views: 20, uploadDate: 20241104 },
+            { title: "Visualising Analytics using MatPlotLib and Python", link: "https://www.youtube.com/watch?v=mHHyrme-iyM", views: 22, uploadDate: 20241104 },
+            { title: "Programming Tic Tac Toe Game using Python", link: "https://www.youtube.com/watch?v=S1xa4pVu2_M", views: 15, uploadDate: 20241104 },
+            { title: "Using Python and OpenWeather API to get weather data.", link: "https://www.youtube.com/watch?v=AOOjKt7_qrw", views: 48, uploadDate: 20241104 },
+            { title: "Track Your Daily Water Intake using Python 😃:Simple Data Visualisation", link: "https://www.youtube.com/watch?v=Ur60Jx7Rw_s", views: 17, uploadDate: 20241104 },
+            { title: "Selenium Basics : How to take Screenshot of any webpage using Python Selenium?", link: "https://www.youtube.com/watch?v=zAfaChADemg", views: 49, uploadDate: 20240321 },
+            { title: "Approach to all Test case of Automation _Testing.com", link: "https://www.youtube.com/watch?v=BOjwEJ8LrXk", views: 42, uploadDate: 20240314 },
+            { title: "Master Python Syntax: Essential Guide for Beginners", link: "https://www.youtube.com/watch?v=XRUyig-xfQ4", views: 45, uploadDate: 20240311 },
+            { title: "Introduction: What is Python?", link: "https://www.youtube.com/watch?v=6vKZjYs6nno", views: 24, uploadDate: 20240311 },
+            { title: "PYTHON BASICS: SOLVING Selenium Test Case 1: Register User using automation", link: "https://www.youtube.com/watch?v=V5j37BRDHt8", views: 108, uploadDate: 20240307 },
+            { title: "The Basics of Selenium Automation", link: "https://www.youtube.com/watch?v=oh6SCt3qG0E", views: 26, uploadDate: 20240307 },
+            { title: "Basics of making Google Maps Automated .", link: "https://www.youtube.com/watch?v=ZDpYkHuQWQo", views: 58, uploadDate: 20240302 },
+            { title: "How to click on any Web Page Button for more than 2 times using PYTHON", link: "https://www.youtube.com/watch?v=twdfTK7cNc0", views: 10, uploadDate: 20240302 },
+            { title: "Basic Visualizations of analytics using MatplotLib", link: "https://www.youtube.com/watch?v=OKbUfK7-YKY", views: 13, uploadDate: 20240302 },
+            { title: "Understanding Basics of Pandas", link: "https://www.youtube.com/watch?v=9VRoLWw7b-g", views: 9, uploadDate: 20240302 },
+            { title: "Understanding Data_Frames using Pandas", link: "https://www.youtube.com/watch?v=KVKfKmvXlIs", views: 10, uploadDate: 20240302 },
+            { title: "Converting a list to String In python", link: "https://www.youtube.com/watch?v=rSbU5EoVHKE", views: 6, uploadDate: 20240302 },
+            { title: "Interacting with Google Maps Using selenium Python", link: "https://www.youtube.com/watch?v=7P9T91NQVRs", views: 36, uploadDate: 20240226 },
+            { title: "Browser Automation Basics ! Interacting With Webpages.", link: "https://www.youtube.com/watch?v=CCfvyd8mn0k", views: 20, uploadDate: 20240226 },
+            { title: "Python Basics: Making a calculator to calculate BMI using PYTHON", link: "https://www.youtube.com/watch?v=-_PJBDBlVFs", views: 26, uploadDate: 20240226 },
+            { title: "Python Basics 1: How to make a calculator.", link: "https://www.youtube.com/watch?v=oBuNLb2Uftg", views: 29, uploadDate: 20240226 },
+        ];
+        
+        // Helper function to format view counts
+        function formatViews(num) {
+            if (num >= 1000000) return (num / 1000000).toFixed(1).replace(/\.0$/, '') + 'M';
+            if (num >= 1000) return (num / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
+            return num;
+        }
+
+        // Helper function to format YYYYMMDD date to a readable format
+        function formatDate(dateInt) {
+            const dateStr = dateInt.toString();
+            const year = dateStr.substring(0, 4);
+            const month = parseInt(dateStr.substring(4, 6), 10) - 1;
+            const day = dateStr.substring(6, 8);
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            return `${months[month]} ${day}, ${year}`;
+        }
+
+        // Function to render YouTube videos
+        function renderYoutubeVideos(limit) {
+            const youtubeGrid = document.getElementById('youtube-grid');
+            youtubeGrid.innerHTML = ''; // Clear existing videos
+
+            // Sort videos by date, newest first
+            const sortedVideos = [...youtubeVideos].sort((a, b) => b.uploadDate - a.uploadDate);
+            const videosToRender = limit ? sortedVideos.slice(0, limit) : sortedVideos;
+
+            videosToRender.forEach(video => {
+                const videoId = new URL(video.link).searchParams.get('v');
+                const thumbnailUrl = `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`;
+
+                const videoCard = document.createElement('div');
+                videoCard.className = 'video-card';
+                videoCard.innerHTML = `
+                    <a href="${video.link}" target="_blank" class="video-thumbnail-link" style="background-image: url('${thumbnailUrl}');"></a>
+                    <div class="video-info">
+                        <h4>${video.title}</h4>
+                        <div class="video-stats">
+                            <span>${formatViews(video.views)} views</span>
+                            <span>${formatDate(video.uploadDate)}</span>
+                        </div>
+                        <a href="${video.link}" target="_blank" class="video-link">Watch on YouTube</a>
+                    </div>
+                `;
+                youtubeGrid.appendChild(videoCard);
+            });
+        }
+
+        // Function to update stats
+        function updateYouTubeStats() {
+            const totalVideos = youtubeVideos.length;
+            const totalViews = youtubeVideos.reduce((sum, video) => sum + video.views, 0);
+
+            document.getElementById('total-videos').textContent = totalVideos;
+            document.getElementById('total-views').textContent = formatViews(totalViews);
+        }
+
+        // Initial render of YouTube section
+        updateYouTubeStats();
+        renderYoutubeVideos(8); // Initially show 8 latest videos
+
+        // Event listener for the "Show All" button
+        const showAllBtn = document.getElementById('view-all-videos-btn');
+        const showAllContainer = document.getElementById('view-all-videos-container');
+        showAllBtn.addEventListener('click', () => {
+            renderYoutubeVideos(); // Render all videos
+            showAllContainer.style.display = 'none'; // Hide the button
+        });
+        // --- END: YouTube Video Data and Functions ---
+
+
         // --- Dynamic Project Loading ---
         const projectGrid = document.getElementById('project-grid');
         function renderProjects(filter = 'all') {
@@ -850,7 +1000,7 @@
             });
         });
 
-        // Initial render
+        // Initial project render
         renderProjects();
 
         // --- Typewriter Effect ---
