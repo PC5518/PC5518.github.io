@@ -1,252 +1,607 @@
-<!DOCTYPE html>
-<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>About Us — Aditya N Singh</title>
-  <meta name="description" content="About Aditya N Singh (ANS) — mission, values, and story behind PyCraftAICentral and the portfolio." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aditya N Singh | Personal Portfolio</title>
+    <meta name="description" content="Personal portfolio of Aditya N Singh, showcasing projects and tutorials in Python, Data Science, and Application Development.">
+    
+    <!-- Google Fonts: Poppins for a modern look -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;text y=%22.9em%22 font-size=%2290%22&gt;👨‍💻&lt;/text&gt;&lt;/svg&gt;">
 
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS Reset and Global Styles */
+        :root {
+            --bg-color: #121212;
+            --surface-color: #1e1e1e;
+            --primary-color: #00aaff; /* A vibrant blue for accents */
+            --secondary-color: #03dac6; /* A teal for contrast */
+            --text-color: #e0e0e0;
+            --text-muted-color: #888;
+            --border-color: #333;
+            --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            --font-family: 'Poppins', sans-serif;
+        }
 
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👨‍💻</text></svg>">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-  <style>
-    :root{
-      --bg-color:#121212; --surface-color:#1e1e1e; --primary-color:#00aaff;
-      --secondary-color:#03dac6; --text-color:#e0e0e0; --text-muted-color:#888;
-      --border-color:#333; --card-shadow:0 8px 30px rgba(0,0,0,.5);
-      --font-family:'Poppins',sans-serif;
-    }
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{scroll-behavior:smooth;scroll-padding-top:80px}
-    body{font-family:var(--font-family);background:var(--bg-color);color:var(--text-color);line-height:1.6}
-    .container{max-width:1200px;margin:0 auto;padding:0 2rem}
-    section{padding:6rem 0;border-bottom:1px solid var(--border-color)}
-    section:last-of-type{border-bottom:none}
-    h1,h2,h3{font-weight:600;line-height:1.2}
-    h2{font-size:2.5rem;margin-bottom:2rem;text-align:center;position:relative;display:inline-block}
-    h2::after{content:'';position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:4px;background:var(--primary-color);border-radius:2px}
-    .section-header{text-align:center;margin-bottom:4rem}
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 80px; /* Offset for fixed header */
+        }
 
-    /* Header */
-    .header{position:fixed;top:0;left:0;width:100%;padding:1rem 0;background:rgba(18,18,18,.8);backdrop-filter:blur(10px);z-index:1000;border-bottom:1px solid transparent;transition:background .3s ease}
-    .header.scrolled{background:rgba(30,30,30,.9);border-bottom:1px solid var(--border-color)}
-    .nav{display:flex;justify-content:space-between;align-items:center}
-    .nav-logo{font-size:1.5rem;font-weight:700;color:var(--text-color);text-decoration:none}
-    .nav-logo span{color:var(--primary-color)}
-    .nav-list{list-style:none;display:flex;gap:2rem}
-    .nav-link{text-decoration:none;color:var(--text-muted-color);font-weight:500;position:relative;transition:color .3s}
-    .nav-link::after{content:'';position:absolute;bottom:-5px;left:0;width:0;height:2px;background:var(--primary-color);transition:width .3s}
-    .nav-link:hover,.nav-link.active{color:var(--text-color)}
-    .nav-link:hover::after,.nav-link.active::after{width:100%}
-    .nav-toggle{display:none;background:none;border:none;cursor:pointer}
-    .nav-toggle .bar{display:block;width:25px;height:3px;margin:5px auto;background:var(--text-color);transition:all .3s}
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
 
-    /* Hero */
-    .hero{min-height:55vh;display:flex;align-items:center;justify-content:center;text-align:center;padding-top:6rem}
-    .hero h1{font-size:3rem;margin-bottom:1rem}
-    .hero p{max-width:900px;margin:0 auto 2rem;color:var(--text-muted-color);font-size:1.1rem}
-    .btn{display:inline-block;padding:.8rem 2.2rem;background:var(--primary-color);color:#fff;text-decoration:none;border-radius:50px;font-weight:600;border:2px solid var(--primary-color);transition:transform .3s,box-shadow .3s}
-    .btn:hover{transform:translateY(-4px);box-shadow:0 10px 20px rgba(0,170,255,.2)}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
 
-    /* Two-column */
-    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:center}
-    .card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:15px;box-shadow:var(--card-shadow);padding:2rem}
-    .muted{color:var(--text-muted-color)}
-    .values{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1.5rem}
-    .value{background:var(--surface-color);border:1px solid var(--border-color);border-radius:12px;padding:1.2rem}
-    .value h4{margin-bottom:.5rem;color:var(--secondary-color)}
-    .list{margin-top:1rem}
-    .list li{margin:.4rem 0}
+        h1, h2, h3 {
+            font-weight: 600;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: var(--primary-color);
+            border-radius: 2px;
+        }
 
-    /* Timeline */
-    .timeline{position:relative;margin:0 auto;max-width:900px}
-    .timeline::before{content:'';position:absolute;left:calc(50% - 1px);width:2px;top:0;bottom:0;background:var(--border-color)}
-    .t-item{position:relative;margin:2rem 0;display:grid;grid-template-columns:1fr 1fr;gap:2rem}
-    .t-item .dot{position:absolute;left:calc(50% - 7px);top:10px;width:14px;height:14px;background:var(--primary-color);border-radius:50%}
-    .t-card{background:var(--surface-color);border:1px solid var(--border-color);border-radius:12px;padding:1rem 1.2rem}
-    .t-card h4{margin-bottom:.3rem}
-    .center{text-align:center}
+        section {
+            padding: 6rem 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        section:last-of-type {
+            border-bottom: none;
+        }
 
-    /* CTA */
-    .cta{background:linear-gradient(145deg,#101010,#1b1b1b);border-top:1px solid var(--border-color)}
-    .cta .box{max-width:800px;margin:0 auto;text-align:center}
-    .cta p{color:var(--text-muted-color);margin:1rem 0 2rem}
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
 
-    /* Footer */
-    footer{padding:2rem 0;text-align:center;background:var(--surface-color);border-top:1px solid var(--border-color)}
+        /* Header & Navigation */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 1rem 0;
+            background: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: background 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+        
+        .header.scrolled {
+            background: rgba(30, 30, 30, 0.9);
+            border-bottom: 1px solid var(--border-color);
+        }
 
-    /* Fade-in */
-    .fade-in{opacity:0;transform:translateY(20px);transition:opacity .6s ease-out,transform .6s ease-out}
-    .fade-in.visible{opacity:1;transform:translateY(0)}
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    /* Responsive */
-    @media(max-width:992px){.grid-2{grid-template-columns:1fr}}
-    @media(max-width:768px){
-      html{font-size:90%}
-      .nav-list{position:fixed;top:0;right:-100%;width:60%;height:100vh;background:var(--surface-color);
-        flex-direction:column;align-items:center;justify-content:center;transition:right .5s;box-shadow:-10px 0 30px rgba(0,0,0,.5)}
-      .nav-list.active{right:0}
-      .nav-toggle{display:block;z-index:1001}
-      .nav-toggle.active .bar:nth-child(2){opacity:0}
-      .nav-toggle.active .bar:nth-child(1){transform:translateY(8px) rotate(45deg)}
-      .nav-toggle.active .bar:nth-child(3){transform:translateY(-8px) rotate(-45deg)}
-    }
-  </style>
-</head>
-<body>
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+        }
+        .nav-logo span { color: var(--primary-color); }
+        
+        .nav-list {
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+        }
 
-  <!-- Header -->
-  <header class="header">
-    <div class="container nav">
-      <a href="/" class="nav-logo">ANS<span>.</span></a>
-      <ul class="nav-list">
-        <li><a href="/" class="nav-link">Home</a></li>
-        <li><a href="/aboutus/" class="nav-link active">About</a></li>
-        <li><a href="/#projects" class="nav-link">Projects</a></li>
-        <li><a href="/#nonprofit-youtube" class="nav-link">YouTube</a></li>
-        <li><a href="/#contact" class="nav-link">Contact</a></li>
-      </ul>
-      <button class="nav-toggle" aria-label="Toggle navigation">
-        <span class="bar"></span><span class="bar"></span><span class="bar"></span>
-      </button>
-    </div>
-  </header>
+        .nav-link {
+            text-decoration: none;
+            color: var(--text-muted-color);
+            font-weight: 500;
+            position: relative;
+            transition: color 0.3s ease;
+        }
 
-  <main>
-    <!-- Hero -->
-    <section class="hero">
-      <div class="container">
-        <h1>About <span style="color:var(--primary-color)">Aditya N Singh</span></h1>
-        <p class="muted">Developer, educator, and lifelong learner — building data-driven apps and sharing STEM through
-          <strong>PyCraftAICentral</strong>. This page tells the mission, values, and story behind the work.</p>
-        <a class="btn" href="/#projects">See Projects</a>
-      </div>
-    </section>
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
 
-    <!-- Mission & What I Do -->
-    <section id="mission">
-      <div class="container">
-        <div class="section-header"><h2>Mission & Focus</h2></div>
-        <div class="grid-2">
-          <div class="card">
-            <h3>Mission</h3>
-            <p class="muted">Use software and mathematical thinking to create practical tools for real people — and make advanced STEM topics accessible for every learner.</p>
-            <ul class="list">
-              <li>Publish free, high-quality tutorials in math, data science, and Python.</li>
-              <li>Build reliable, minimal, no-nonsense apps that solve clear problems.</li>
-              <li>Share everything openly so others can learn, remix, and improve.</li>
-            </ul>
-          </div>
-          <div class="card">
-            <h3>What I Build</h3>
-            <ul class="list">
-              <li>Data tools: analytics, plotting, ML demos, financial index trackers.</li>
-              <li>Desktop utilities: screen recorder, camera pinning, productivity tools.</li>
-              <li>Learning resources: Integration Bee solutions, NumPy/ML playlists.</li>
-            </ul>
-            <p class="muted" style="margin-top:1rem">Core stack: Python, NumPy, Pandas, scikit-learn, Matplotlib, PyQt6, Selenium, TypeScript.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        .nav-link:hover, .nav-link.active {
+            color: var(--text-color);
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
 
-    <!-- Values -->
-    <section id="values">
-      <div class="container">
-        <div class="section-header"><h2>Values</h2></div>
-        <div class="values">
-          <div class="value">
-            <h4>Clarity</h4>
-            <p class="muted">Simple UIs, readable code, and step-by-step explanations.</p>
-          </div>
-          <div class="value">
-            <h4>Reliability</h4>
-            <p class="muted">Prefer correctness and stability over flashy features.</p>
-          </div>
-          <div class="value">
-            <h4>Service</h4>
-            <p class="muted">Teach freely, credit sources, and help new learners grow.</p>
-          </div>
-          <div class="value">
-            <h4>Iteration</h4>
-            <p class="muted">Ship small, improve continuously, document along the way.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+        /* Mobile Nav */
+        .nav-toggle {
+            display: none;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .nav-toggle .bar {
+            display: block;
+            width: 25px;
+            height: 3px;
+            margin: 5px auto;
+            background-color: var(--text-color);
+            transition: all 0.3s ease-in-out;
+        }
 
-    <!-- Story / Timeline -->
-    <section id="story">
-      <div class="container">
-        <div class="section-header"><h2>Story</h2></div>
-        <div class="timeline">
-          <div class="t-item">
-            <span class="dot"></span>
-            <div class="t-card"><h4>Early Curiosity</h4><p class="muted">Fell in love with mathematics and problem solving; started scripting in Python to automate tiny tasks.</p></div>
-            <div></div>
-          </div>
-          <div class="t-item">
-            <span class="dot"></span>
-            <div></div>
-            <div class="t-card"><h4>Open-Source Projects</h4><p class="muted">Shared utilities on GitHub — from plotting tools to Selenium scripts — and kept refining software craft.</p></div>
-          </div>
-          <div class="t-item">
-            <span class="dot"></span>
-            <div class="t-card"><h4>PyCraftAICentral</h4><p class="muted">Launched a non-profit YouTube initiative to teach NumPy, ML basics, and advanced calculus topics clearly.</p></div>
-            <div></div>
-          </div>
-          <div class="t-item">
-            <span class="dot"></span>
-            <div></div>
-            <div class="t-card"><h4>Today & Next</h4><p class="muted">Building data-driven apps, solving Integration Bee problems, and pushing toward research-ready AI skills.</p></div>
-          </div>
-        </div>
-      </div>
-    </section>
+        /* Home Section */
+        #home {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        .home-content {
+            max-width: 800px;
+        }
+        #home h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        #home h1 span { color: var(--primary-color); }
+        .typewriter-text {
+            font-size: 2rem;
+            font-weight: 500;
+            color: var(--secondary-color);
+            height: 40px; /* Prevent layout shift */
+        }
+        #home p {
+            font-size: 1.2rem;
+            color: var(--text-muted-color);
+            margin: 1.5rem 0;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2.5rem;
+            background: var(--primary-color);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 2px solid var(--primary-color);
+        }
+        .btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 170, 255, 0.2);
+        }
 
-    <!-- Contact / CTA -->
-    <section class="cta">
-      <div class="container box">
-        <h2 style="display:inline-block">Work With Me</h2>
-        <p>Have an idea that needs data, math, or a clean desktop tool? I’d love to collaborate.</p>
-        <a class="btn" href="mailto:adityansdsdc@outlook.com">Email: adityansdsdc@outlook.com</a>
-        <p class="muted" style="margin-top:1rem">
-          GitHub: <a href="https://github.com/PC5518" target="_blank" style="color:var(--secondary-color)">PC5518</a> ·
-          YouTube: <a href="https://www.youtube.com/@PyCraftAICentral" target="_blank" style="color:var(--secondary-color)">PyCraftAICentral</a>
-        </p>
-      </div>
-    </section>
-  </main>
+        /* About Section */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: center;
+        }
+        .about-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 15px;
+            object-fit: cover;
+            justify-self: center;
+            box-shadow: var(--card-shadow);
+        }
+        .about-text h3 {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        .skills-list {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .skill-item {
+            background: var(--surface-color);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            font-weight: 500;
+            border: 1px solid var(--border-color);
+        }
 
-  <footer>
-    <div class="container">
-      <p>&copy; <span id="year"></span> Aditya N Singh. All Rights Reserved.</p>
-    </div>
-  </footer>
+        /* Projects Section */
+        .project-filters {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        .filter-btn {
+            background: var(--surface-color);
+            color: var(--text-muted-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--primary-color);
+            color: #fff;
+            border-color: var(--primary-color);
+        }
+        
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+        }
 
-  <script>
-    // active header background
-    const header=document.querySelector('.header');
-    window.addEventListener('scroll',()=>{ header.classList.toggle('scrolled', window.scrollY>50); });
+        .project-card {
+            background: var(--surface-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border-color);
+        }
 
-    // mobile nav
-    const navToggle=document.querySelector('.nav-toggle');
-    const navList=document.querySelector('.nav-list');
-    navToggle.addEventListener('click',()=>{ navToggle.classList.toggle('active'); navList.classList.toggle('active'); });
-    document.querySelectorAll('.nav-link').forEach(l=>l.addEventListener('click',()=>{ navToggle.classList.remove('active'); navList.classList.remove('active'); }));
+        .project-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+        }
 
-    // fade-in on scroll
-    const faders=document.querySelectorAll('.fade-in');
-    const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('visible'); io.unobserve(e.target);} });},{threshold:.1,rootMargin:"0px 0px -50px 0px"});
-    faders.forEach(f=>io.observe(f));
+        .project-content {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
 
-    // year
-    document.getElementById('year').textContent=new Date().getFullYear();
-  </script>
-</body>
-</html>
+        .project-card h3 {
+            font-size: 1.4rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+        
+        .project-card .project-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .project-card .tag {
+            background-color: rgba(0, 170, 255, 0.1);
+            color: var(--primary-color);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .project-card p {
+            color: var(--text-muted-color);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 1rem;
+            margin-top: auto; /* Pushes links to the bottom */
+        }
+
+        .project-link {
+            flex: 1;
+            text-align: center;
+            padding: 0.7rem 1rem;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+        
+        .view-link {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .view-link:hover {
+            background: #0088cc;
+        }
+        
+        .code-link {
+            background: transparent;
+            color: var(--text-muted-color);
+            border: 1px solid var(--border-color);
+        }
+        .code-link:hover {
+            background: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        /* START: NEW NON-PROFIT YOUTUBE SECTION STYLES */
+        #nonprofit-youtube .nonprofit-intro-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
+        }
+        #nonprofit-youtube .intro-text h3 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+        #nonprofit-youtube .intro-text p {
+            color: var(--text-muted-color);
+            font-size: 1.1rem;
+            max-width: 600px;
+        }
+        
+        #nonprofit-youtube .intro-stats {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        #nonprofit-youtube .stat-card {
+            background: var(--surface-color);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+        #nonprofit-youtube .stat-card .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--secondary-color);
+            line-height: 1;
+        }
+        #nonprofit-youtube .stat-card .stat-label {
+            font-size: 1rem;
+            color: var(--text-muted-color);
+            margin-top: 0.5rem;
+        }
+        
+        .youtube-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+        
+        .video-card {
+            background: var(--surface-color);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .video-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .video-thumbnail-link {
+            display: block;
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background-size: cover;
+            background-position: center;
+        }
+        .video-thumbnail-link::before {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: rgba(255,255,255,0.8);
+            text-shadow: 0 0 15px rgba(0,0,0,0.7);
+            transition: transform 0.3s ease, color 0.3s ease;
+        }
+        .video-card:hover .video-thumbnail-link::before {
+            transform: translate(-50%, -50%) scale(1.2);
+            color: #fff;
+        }
+        
+        .video-info {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        .video-info h4 {
+            font-size: 1.05rem;
+            margin-bottom: 0.75rem;
+            flex-grow: 1;
+            min-height: 3.3em; /* Reserve space for about 2 lines */
+        }
+        .video-stats {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted-color);
+            margin-bottom: 1rem;
+        }
+        .video-link {
+            display: block;
+            text-align: center;
+            background: transparent;
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 0.6rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: auto;
+        }
+        .video-link:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .view-all-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+        /* END: NEW NON-PROFIT YOUTUBE SECTION STYLES */
+
+        /* Contact Section */
+        .contact-content {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .contact-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: var(--text-muted-color);
+        }
+        .contact-methods {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+        .contact-methods a {
+            color: var(--primary-color);
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        .contact-methods a:hover {
+            color: var(--secondary-color);
+        }
+        
+        /* Footer */
+        footer {
+            padding: 2rem 0;
+            text-align: center;
+            background: var(--surface-color);
+        }
+
+        /* Utility Classes */
+        .hidden {
+            display: none !important;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .about-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            .about-image {
+                margin-bottom: 2rem;
+            }
+            #nonprofit-youtube .nonprofit-intro-grid {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+            #nonprofit-youtube .intro-text p {
+                margin: 0 auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            html {
+                font-size: 90%;
+            }
+            .nav-list {
+                position: fixed;
+                top: 0;
+                right: -100%;
+                width: 60%;
+                height: 100vh;
+                background: var(--surface-color);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                transition: right 0.5s ease-in-out;
+                box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+            }
+            .nav-list.active {
+                right: 0;
+            }
+            .nav-toggle {
+                display: block;
+                z-index: 1001; /* Above nav list */
+            }
+            
+            .nav-toggle.active .bar:nth-child(2) { opacity: 0; }
+            .nav-toggle.active .bar:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+            .nav-toggle.active .bar:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 1rem;
+            }
+            #home h1 {
+                font-size: 2.8rem;
+            }
+            .typewriter-text {
+                font-size: 1.5rem;
+            }
+        }
+
+    </style>
+<style>.lottie-animation-container{width:var(--lottie-animation-container-width);height:var(--lottie-animation-container-height);background-color:var(--lottie-animation-container-background-color);overflow:hidden;margin:var(--lottie-animation-margin)}.lottie-animation-container svg{transform:scale(var(--lottie-animation-scale))}</style><style>.lottie-animation-container{width:var(--lottie-animation-container-width);height:var(--lottie-animation-container-height);background-color:var(--lottie-animation-container-background-color);overflow:hidden;margin:var(--lottie-animation-margin)}.lottie-animation-container svg{transform:scale(var(--lottie-animation-scale))}</style></head>
