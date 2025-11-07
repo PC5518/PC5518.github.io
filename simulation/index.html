@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Faraday's Law Simulation</title>
+    <style>
+        /* --- General Page Styling --- */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to top, #0c1b33, #1a3a69);
+            color: white;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        /* --- UI Elements Styling --- */
+        #ui-container {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Allow mouse events to pass through the container to the 3D canvas */
+            pointer-events: none;
+        }
+
+        #instructions {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        /* --- Ammeter Styling with Advanced CSS Animations --- */
+        #ammeter {
+            width: 200px;
+            height: 100px; /* Half circle */
+            background: rgba(10, 20, 40, 0.8);
+            border: 2px solid #5d8aff;
+            border-bottom: 0;
+            border-radius: 100px 100px 0 0;
+            position: relative;
+            box-shadow: 0 0 15px rgba(93, 138, 255, 0.5), inset 0 5px 20px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            pointer-events: auto; /* Re-enable pointer events for this element */
+            transition: box-shadow 0.3s ease;
+        }
+
+        /* The glowing effect when current is high */
+        #ammeter.active {
+            box-shadow: 0 0 25px #8bb0ff, inset 0 5px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #ammeter-center-pivot {
+            width: 15px;
+            height: 15px;
+            background: #2c3e50;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%) translateY(50%);
+            border: 2px solid #bdc3c7;
+            z-index: 10;
+        }
+        
+        #needle {
+            width: 3px;
+            height: 85px;
+            background: #e74c3c;
+            box-shadow: 0 0 5px #e74c3c;
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translateX(-50%) rotate(0deg);
+            border-radius: 3px 3px 0 0;
+            /* This is the key to smooth animation */
+            transition: transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        #current-display {
+            font-size: 24px;
+            font-weight: 600;
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 5px 15px;
+            border-radius: 8px;
+            text-shadow: 0 0 5px #ffffff;
+            pointer-events: auto;
+        }
+
+        /* Pulsing animation for the 3D coil when active */
+        @keyframes pulseGlow {
+            0% { filter: drop-shadow(0 0 5px #ffffff); }
+            50% { filter: drop-shadow(0 0 20px #ffffff); }
+            100% { filter: drop-shadow(0 0 5px #ffffff); }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="instructions">
+        Click and drag the magnet to induce a current.<br>
+        Use your mouse to rotate, pan, and zoom the scene.
+    </div>
+
+    <div id="ui-container">
+        <div id="ammeter">
+            <div id="ammeter-center-pivot"></div>
+            <div id="needle"></div>
+        </div>
+        <div id="current-display">0.00 A</div>
+    </div>
+    
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+        // --- GLOBAL VARIABLES ---
+        let scene, camera, renderer, controls;
+        let magnet, coil;
+        let efieldMesh; // Using an InstancedMesh for performance
+        let isDragging = false;
+        let previousFlux = 0.0;
+        let previousBField = [];
+        const clock = new THREE.Clock();
+        
+        // --- DOM ELEMENTS ---
+        const needle = document.getElementById('needle');
+        const currentDisplay = document.getElementById('current-display');
+        const ammeterDiv = document.getElementById('ammeter');
+
+        // --- SIMULATION CONSTANTS ---
+        const COIL_RADIUS = 1;
+        const COIL_TURNS = 10;
+        const COIL_RESISTANCE = 2.0;
+        const MAGNET_MOMENT = 20.0;
+        const EFIELD_GRID_SIZE = 20; // Lower for more performance, higher for more detail
+
+        // --- INITIALIZATION ---
+        function init() {
+            // Scene
+            scene = new THREE.Scene();
+
+            // Camera
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(2, 2, 4);
+
+            // Renderer
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            // Lighting
+            scene.add(new THREE.AmbientLight(0xcccccc, 0.8));
+            const pointLight = new THREE.PointLight(0xffffff, 1.5);
+            camera.add(pointLight);
+            scene.add(camera);
+
+            // Controls
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            // Create Objects
+            createCoil();
+            createMagnet();
+            createElectricField();
+            
+            // Event Listeners
+            window.addEventListener('resize', onWindowResize);
+            setupDragControls();
+        }
+
+        // --- OBJECT CREATION ---
+        function createCoil() {
+            const curve = new THREE.CatmullRomCurve3(
+                Array.from({ length: 200 }, (_, i) => {
+                    const angle = (i / 199) * COIL_TURNS * 2 * Math.PI;
+                    const z = (i / 199) * 0.4 - 0.2;
+                    return new THREE.Vector3(
+                        Math.cos(angle) * COIL_RADIUS,
+                        Math.sin(angle) * COIL_RADIUS,
+                        z
+                    );
+                })
+            );
+            const geometry = new THREE.TubeGeometry(curve, 200, 0.04, 8, false);
+            const material = new THREE.MeshStandardMaterial({
+                color: 0xc3a995,
+                metalness: 0.8,
+                roughness: 0.2
+            });
+            coil = new THREE.Mesh(geometry, material);
+            scene.add(coil);
+        }
+
+        function createMagnet() {
+            const geometry = new THREE.CylinderGeometry(0.3, 0.3, 1.5, 32);
+            geometry.setAttribute('color', new THREE.BufferAttribute(new Float32Array(geometry.attributes.position.count * 3), 3));
+            
+            const position = geometry.attributes.position;
+            const colors = geometry.attributes.color;
+            for (let i = 0; i < position.count; i++) {
+                // North pole (red) if y > 0, South pole (blue) if y < 0
+                colors.setXYZ(i, position.getY(i) > 0 ? 1 : 0.2, 0.2, position.getY(i) < 0 ? 1 : 0.2);
+            }
+
+            const material = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0.2, roughness: 0.5 });
+            magnet = new THREE.Mesh(geometry, material);
+            magnet.position.z = -3;
+            magnet.rotation.x = Math.PI / 2; // Point along Z-axis
+            scene.add(magnet);
+        }
+
+        function createElectricField() {
+            const points = [];
+            const s = EFIELD_GRID_SIZE;
+            for (let x = 0; x < s; x++) {
+                for (let y = 0; y < s; y++) {
+                    for (let z = 0; z < s/2; z++) {
+                        const pt = new THREE.Vector3(
+                            (x / (s - 1) - 0.5) * 6,
+                            (y / (s - 1) - 0.5) * 6,
+                            (z / (s/2 - 1) - 0.5) * 3
+                        );
+                        // Exclude points inside the coil for better visibility
+                        if (pt.lengthSq() > 1.5*1.5 || Math.abs(pt.z) > 0.4) {
+                             points.push(pt);
+                        }
+                    }
+                }
+            }
+            
+            // Use an instanced mesh for performance
+            const geometry = new THREE.ConeGeometry(0.02, 0.1, 4);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffff00 });
+            efieldMesh = new THREE.InstancedMesh(geometry, material, points.length);
+
+            const dummy = new THREE.Object3D();
+            points.forEach((p, i) => {
+                dummy.position.copy(p);
+                dummy.updateMatrix();
+                efieldMesh.setMatrixAt(i, dummy.matrix);
+            });
+            
+            previousBField = new Array(points.length).fill(null).map(() => new THREE.Vector3());
+            efieldMesh.userData.points = points;
+            scene.add(efieldMesh);
+        }
+
+        // --- PHYSICS CALCULATIONS ---
+        function getMagneticField(point, magnetPos, magnetDir) {
+            const mVec = magnetDir.clone().multiplyScalar(MAGNET_MOMENT);
+            const r = point.clone().sub(magnetPos);
+            const rMag = r.length();
+            if (rMag < 0.1) return new THREE.Vector3(); // Avoid singularity
+
+            const rHat = r.clone().normalize();
+            const mDotRHat = mVec.dot(rHat);
+
+            // B = K * (3 * r_hat * (m ⋅ r_hat) - m) / |r|³
+            const term1 = rHat.clone().multiplyScalar(3 * mDotRHat);
+            const bField = term1.sub(mVec).divideScalar(Math.pow(rMag, 3));
+            return bField;
+        }
+
+        function calculateMagneticFlux() {
+            const magnetDir = new THREE.Vector3(0, 0, 1).applyQuaternion(magnet.quaternion);
+            let totalFlux = 0;
+            const samples = 30;
+            for (let i = 0; i < samples; i++) {
+                const r = Math.random() * COIL_RADIUS;
+                const theta = Math.random() * 2 * Math.PI;
+                const point = new THREE.Vector3(r * Math.cos(theta), r * Math.sin(theta), 0);
+                const b = getMagneticField(point, magnet.position, magnetDir);
+                // B dot dA, where dA is along Z axis
+                totalFlux += b.z;
+            }
+            const area = Math.PI * COIL_RADIUS * COIL_RADIUS;
+            return (totalFlux / samples) * area;
+        }
+
+        function updatePhysics(dt) {
+            const currentFlux = calculateMagneticFlux();
+            const dFluxDt = (currentFlux - previousFlux) / dt;
+            const emf = -COIL_TURNS * dFluxDt;
+            const current = emf / COIL_RESISTANCE;
+
+            updateAmmeter(current);
+            updateEField(dt);
+            previousFlux = currentFlux;
+        }
+
+        function updateEField(dt) {
+            const magnetDir = new THREE.Vector3(0, 0, 1).applyQuaternion(magnet.quaternion);
+            const points = efieldMesh.userData.points;
+            const currentBField = points.map(p => getMagneticField(p, magnet.position, magnetDir));
+            
+            const dummy = new THREE.Object3D();
+            const zAxis = new THREE.Vector3(0, 0, 1);
+
+            for (let i = 0; i < points.length; i++) {
+                const db_dt = currentBField[i].clone().sub(previousBField[i]).divideScalar(dt);
+                const r_from_axis = points[i].clone();
+                r_from_axis.z = 0;
+                
+                // E ≈ -r/2 × (dB/dt)
+                const e_field = r_from_axis.cross(db_dt).multiplyScalar(-0.5);
+                const e_mag = e_field.length();
+
+                dummy.position.copy(points[i]);
+
+                if (e_mag > 0.001) {
+                    dummy.scale.set(1, 1, 1);
+                    // Orient the cone along the E-field vector
+                    dummy.quaternion.setFromUnitVectors(zAxis, e_field.clone().normalize());
+                } else {
+                    dummy.scale.set(0, 0, 0); // Hide if field is negligible
+                }
+                
+                dummy.updateMatrix();
+                efieldMesh.setMatrixAt(i, dummy.matrix);
+            }
+            efieldMesh.instanceMatrix.needsUpdate = true;
+            previousBField = currentBField;
+        }
+
+
+        // --- UI & INTERACTION ---
+        function updateAmmeter(current) {
+            const MAX_CURRENT = 5.0;
+            const clampedCurrent = Math.max(-MAX_CURRENT, Math.min(MAX_CURRENT, current));
+            const angle = (clampedCurrent / MAX_CURRENT) * 90; // 90 degrees max deflection
+            
+            needle.style.transform = `translateX(-50%) rotate(${angle}deg)`;
+            currentDisplay.textContent = `${current.toFixed(2)} A`;
+            
+            // Add glowing effect based on current intensity
+            if (Math.abs(current) > 0.5) {
+                ammeterDiv.classList.add('active');
+                coil.material.emissive.setHex(0x555555); // Make coil glow slightly
+            } else {
+                ammeterDiv.classList.remove('active');
+                coil.material.emissive.setHex(0x000000);
+            }
+        }
+
+        function setupDragControls() {
+            const raycaster = new THREE.Raycaster();
+            const mouse = new THREE.Vector2();
+            const dragPlane = new THREE.Plane();
+            const offset = new THREE.Vector3();
+            
+            window.addEventListener('pointerdown', (event) => {
+                mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObject(magnet);
+                
+                if (intersects.length > 0) {
+                    isDragging = true;
+                    controls.enabled = false;
+                    dragPlane.setFromNormalAndCoplanarPoint(camera.getWorldDirection(dragPlane.normal), intersects[0].point);
+                    offset.copy(intersects[0].point).sub(magnet.position);
+                }
+            });
+
+            window.addEventListener('pointermove', (event) => {
+                if (isDragging) {
+                    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+                    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+                    raycaster.setFromCamera(mouse, camera);
+                    const intersection = new THREE.Vector3();
+                    raycaster.ray.intersectPlane(dragPlane, intersection);
+                    magnet.position.copy(intersection.sub(offset));
+                }
+            });
+
+            window.addEventListener('pointerup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    controls.enabled = true;
+                    // Reset physics when movement stops
+                    updateAmmeter(0);
+                    const dummy = new THREE.Object3D();
+                    for(let i=0; i < efieldMesh.count; i++) {
+                        dummy.scale.set(0,0,0);
+                        dummy.position.copy(efieldMesh.userData.points[i]);
+                        dummy.updateMatrix();
+                        efieldMesh.setMatrixAt(i, dummy.matrix);
+                    }
+                    efieldMesh.instanceMatrix.needsUpdate = true;
+                    previousFlux = calculateMagneticFlux();
+                }
+            });
+        }
+        
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // --- ANIMATION LOOP ---
+        function animate() {
+            requestAnimationFrame(animate);
+            const dt = clock.getDelta();
+
+            controls.update();
+
+            if (isDragging) {
+                updatePhysics(dt);
+            }
+            
+            renderer.render(scene, camera);
+        }
+
+        // --- START ---
+        init();
+        animate();
+    </script>
+</body>
+</html>
