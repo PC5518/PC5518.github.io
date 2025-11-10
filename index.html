@@ -129,6 +129,7 @@
             list-style: none;
             display: flex;
             gap: 2rem;
+            align-items: center;
         }
 
         .nav-link {
@@ -156,6 +157,138 @@
         .nav-link:hover::after, .nav-link.active::after {
             width: 100%;
         }
+        
+        /* START: FIREBASE AUTH STYLES */
+        .auth-button {
+            background: transparent;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .auth-button:hover {
+            background: var(--primary-color);
+            color: #fff;
+        }
+        .auth-container { display: flex; gap: 1rem; }
+        .user-profile-container {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        #user-name-display {
+            font-weight: 500;
+            cursor: pointer;
+        }
+        #logout-button {
+            background: transparent;
+            color: var(--text-muted-color);
+            border: 1px solid var(--border-color);
+        }
+        #logout-button:hover {
+            color: #fff;
+            background: var(--border-color);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: var(--surface-color);
+            margin: 10% auto;
+            padding: 2rem;
+            border: 1px solid var(--border-color);
+            width: 90%;
+            max-width: 450px;
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            position: relative;
+        }
+        .close-button {
+            color: var(--text-muted-color);
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close-button:hover, .close-button:focus {
+            color: var(--text-color);
+        }
+        .modal-content h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-muted-color);
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-color);
+            font-family: inherit;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        .form-button {
+            width: 100%;
+            padding: 0.9rem;
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+        .form-button:hover {
+            background: #0088cc;
+        }
+        .error-message {
+            color: #ff6b6b;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            min-height: 1.2em;
+        }
+        #profile-modal-body p {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted-color);
+        }
+        #profile-modal-body span {
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        /* END: FIREBASE AUTH STYLES */
+
 
         /* Mobile Nav */
         .nav-toggle {
@@ -579,6 +712,7 @@
                 justify-content: center;
                 transition: right 0.5s ease-in-out;
                 box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+                gap: 2.5rem;
             }
             .nav-list.active {
                 right: 0;
@@ -619,6 +753,18 @@
                 <li><a href="#projects" class="nav-link">Projects</a></li>
                 <li><a href="#nonprofit-youtube" class="nav-link">YouTube</a></li>
                 <li><a href="#contact" class="nav-link">Contact</a></li>
+                <!-- START: FIREBASE AUTH NAVIGATION -->
+                <li id="auth-nav-item">
+                    <div id="logged-out-view" class="auth-container">
+                        <button id="login-button" class="auth-button">Login</button>
+                        <button id="signup-button" class="auth-button">Sign Up</button>
+                    </div>
+                    <div id="logged-in-view" class="user-profile-container hidden">
+                        <span id="user-name-display"></span>
+                        <button id="logout-button" class="auth-button">Logout</button>
+                    </div>
+                </li>
+                <!-- END: FIREBASE AUTH NAVIGATION -->
             </ul>
             <button class="nav-toggle" aria-label="Toggle navigation">
                 <span class="bar"></span>
@@ -756,6 +902,66 @@
         </section>
     </main>
 
+    <!-- START: FIREBASE AUTH MODALS -->
+    <!-- Login Modal -->
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-login-modal">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="login-email">Email</label>
+                    <input type="email" id="login-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-password">Password</label>
+                    <input type="password" id="login-password" required>
+                </div>
+                <button type="submit" class="form-button">Login</button>
+                <p id="login-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div id="signup-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-signup-modal">&times;</span>
+            <h2>Sign Up</h2>
+            <form id="signup-form">
+                <div class="form-group">
+                    <label for="signup-name">Full Name</label>
+                    <input type="text" id="signup-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-email">Email</label>
+                    <input type="email" id="signup-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signup-password">Password (min. 6 characters)</label>
+                    <input type="password" id="signup-password" minlength="6" required>
+                </div>
+                <button type="submit" class="form-button">Create Account</button>
+                <p id="signup-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+    
+    <!-- User Profile Modal -->
+    <div id="profile-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-profile-modal">&times;</span>
+            <h2>User Profile</h2>
+            <div id="profile-modal-body">
+                <p>Name: <span id="profile-name"></span></p>
+                <p>Email: <span id="profile-email"></span></p>
+                <p>UID: <span id="profile-uid"></span></p>
+            </div>
+        </div>
+    </div>
+    <!-- END: FIREBASE AUTH MODALS -->
+
+
     <!-- Footer -->
     <footer>
         <div class="container">
@@ -763,7 +969,188 @@
         </div>
     </footer>
 
+    <!-- START: FIREBASE SDK -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-auth.js";
+      import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-firestore.js";
+    
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyA941lWeb5zHdf2y8uPDadCR9cDk6obUD8",
+        authDomain: "pc5518-website-login.firebaseapp.com",
+        projectId: "pc5518-website-login",
+        storageBucket: "pc5518-website-login.firebasestorage.app",
+        messagingSenderId: "655139588775",
+        appId: "1:655139588775:web:9d17161e128598a3a982",
+        measurementId: "G-41E4W75F3H"
+      };
+    
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // --- AUTHENTICATION LOGIC ---
+
+      // --- Get UI Elements ---
+      const loginBtn = document.getElementById('login-button');
+      const signupBtn = document.getElementById('signup-button');
+      const logoutBtn = document.getElementById('logout-button');
+      
+      const loginModal = document.getElementById('login-modal');
+      const signupModal = document.getElementById('signup-modal');
+      const profileModal = document.getElementById('profile-modal');
+      
+      const closeLoginModalBtn = document.getElementById('close-login-modal');
+      const closeSignupModalBtn = document.getElementById('close-signup-modal');
+      const closeProfileModalBtn = document.getElementById('close-profile-modal');
+
+      const loginForm = document.getElementById('login-form');
+      const signupForm = document.getElementById('signup-form');
+
+      const loggedOutView = document.getElementById('logged-out-view');
+      const loggedInView = document.getElementById('logged-in-view');
+      const userNameDisplay = document.getElementById('user-name-display');
+
+      const loginErrorMsg = document.getElementById('login-error');
+      const signupErrorMsg = document.getElementById('signup-error');
+
+      // --- Modal Control Functions ---
+      const openModal = (modal) => modal.style.display = 'block';
+      const closeModal = (modal) => {
+          modal.style.display = 'none';
+          loginErrorMsg.textContent = '';
+          signupErrorMsg.textContent = '';
+      };
+      
+      loginBtn.onclick = () => openModal(loginModal);
+      signupBtn.onclick = () => openModal(signupModal);
+      userNameDisplay.onclick = () => openModal(profileModal);
+      
+      closeLoginModalBtn.onclick = () => closeModal(loginModal);
+      closeSignupModalBtn.onclick = () => closeModal(signupModal);
+      closeProfileModalBtn.onclick = () => closeModal(profileModal);
+
+      window.onclick = (event) => {
+          if (event.target == loginModal) closeModal(loginModal);
+          if (event.target == signupModal) closeModal(signupModal);
+          if (event.target == profileModal) closeModal(profileModal);
+      };
+
+      // --- Firebase Auth State Observer ---
+      onAuthStateChanged(auth, user => {
+          if (user) {
+              // User is signed in
+              loggedInView.classList.remove('hidden');
+              loggedOutView.classList.add('hidden');
+              displayUserProfile(user);
+          } else {
+              // User is signed out
+              loggedInView.classList.add('hidden');
+              loggedOutView.classList.remove('hidden');
+              userNameDisplay.textContent = '';
+          }
+      });
+
+      // --- Display User Profile ---
+      async function displayUserProfile(user) {
+          if (!user) return;
+          const userDocRef = doc(db, "users", user.uid);
+          const docSnap = await getDoc(userDocRef);
+
+          if (docSnap.exists()) {
+              const userData = docSnap.data();
+              userNameDisplay.textContent = `Welcome, ${userData.name}`;
+              // Populate profile modal
+              document.getElementById('profile-name').textContent = userData.name;
+              document.getElementById('profile-email').textContent = userData.email;
+              document.getElementById('profile-uid').textContent = user.uid;
+          } else {
+              console.log("No such document!");
+              userNameDisplay.textContent = 'Welcome!';
+          }
+      }
+
+      // --- Handle Sign Up ---
+      signupForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('signup-name').value;
+          const email = document.getElementById('signup-email').value;
+          const password = document.getElementById('signup-password').value;
+          signupErrorMsg.textContent = '';
+
+          // Client-side validation
+          if (name.trim() === '' || email.trim() === '' || password.length < 6) {
+              signupErrorMsg.textContent = 'Please fill all fields correctly.';
+              return;
+          }
+
+          try {
+              const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+              const user = userCredential.user;
+
+              // Save user profile to Firestore
+              await setDoc(doc(db, "users", user.uid), {
+                  name: name,
+                  email: email,
+                  createdAt: new Date()
+              });
+              
+              closeModal(signupModal);
+              signupForm.reset();
+          } catch (error) {
+              signupErrorMsg.textContent = getFriendlyErrorMessage(error.code);
+          }
+      });
+
+      // --- Handle Login ---
+      loginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('login-email').value;
+          const password = document.getElementById('login-password').value;
+          loginErrorMsg.textContent = '';
+          
+          try {
+              await signInWithEmailAndPassword(auth, email, password);
+              closeModal(loginModal);
+              loginForm.reset();
+          } catch (error) {
+              loginErrorMsg.textContent = getFriendlyErrorMessage(error.code);
+          }
+      });
+
+      // --- Handle Logout ---
+      logoutBtn.addEventListener('click', async () => {
+          try {
+              await signOut(auth);
+          } catch (error) {
+              console.error('Logout Error:', error);
+          }
+      });
+
+      // --- Friendly Error Messages ---
+      function getFriendlyErrorMessage(errorCode) {
+          switch (errorCode) {
+              case 'auth/email-already-in-use':
+                  return 'This email address is already in use.';
+              case 'auth/invalid-email':
+                  return 'Please enter a valid email address.';
+              case 'auth/weak-password':
+                  return 'Password should be at least 6 characters.';
+              case 'auth/user-not-found':
+              case 'auth/wrong-password':
+              case 'auth/invalid-credential':
+                  return 'Invalid email or password.';
+              default:
+                  return 'An unexpected error occurred. Please try again.';
+          }
+      }
+
+    </script>
     <script>
+    // --- EXISTING PAGE SCRIPT ---
     document.addEventListener('DOMContentLoaded', function() {
         
         // --- Project Data ---
@@ -917,6 +1304,7 @@
         // Function to render YouTube videos
         function renderYoutubeVideos(limit) {
             const youtubeGrid = document.getElementById('youtube-grid');
+            if (!youtubeGrid) return; // Guard clause
             youtubeGrid.innerHTML = ''; // Clear existing videos
 
             // Sort videos by date, newest first
@@ -946,11 +1334,15 @@
 
         // Function to update stats
         function updateYouTubeStats() {
+            const totalVideosEl = document.getElementById('total-videos');
+            const totalViewsEl = document.getElementById('total-views');
+            if (!totalVideosEl || !totalViewsEl) return; // Guard clause
+
             const totalVideos = youtubeVideos.length;
             const totalViews = youtubeVideos.reduce((sum, video) => sum + video.views, 0);
 
-            document.getElementById('total-videos').textContent = totalVideos;
-            document.getElementById('total-views').textContent = formatViews(totalViews);
+            totalVideosEl.textContent = totalVideos;
+            totalViewsEl.textContent = formatViews(totalViews);
         }
 
         // Initial render of YouTube section
@@ -960,16 +1352,19 @@
         // Event listener for the "Show All" button
         const showAllBtn = document.getElementById('view-all-videos-btn');
         const showAllContainer = document.getElementById('view-all-videos-container');
-        showAllBtn.addEventListener('click', () => {
-            renderYoutubeVideos(); // Render all videos
-            showAllContainer.style.display = 'none'; // Hide the button
-        });
+        if (showAllBtn) {
+            showAllBtn.addEventListener('click', () => {
+                renderYoutubeVideos(); // Render all videos
+                showAllContainer.style.display = 'none'; // Hide the button
+            });
+        }
         // --- END: YouTube Video Data and Functions ---
 
 
         // --- Dynamic Project Loading ---
         const projectGrid = document.getElementById('project-grid');
         function renderProjects(filter = 'all') {
+            if (!projectGrid) return; // Guard clause
             projectGrid.innerHTML = '';
             const filteredProjects = projects.filter(p => filter === 'all' || p.category === filter);
             
@@ -1010,31 +1405,33 @@
 
         // --- Typewriter Effect ---
         const typewriterEl = document.getElementById('typewriter');
-        const roles = ["Independent Programming", "matplotlib, numpy, pandas, selenium, webdriver_manager, scikit-learn, joblib, ta, re, os, datetime, time, tensorflow, pytorch, scipy, statsmodels, plotly, spacy, transformers", "Free STEM Source Library", "Problem Solver",];
-        let roleIndex = 0;
-        let charIndex = 0;
-        let isDeleting = false;
+        if(typewriterEl) {
+            const roles = ["Independent Programming", "matplotlib, numpy, pandas, selenium, webdriver_manager, scikit-learn, joblib, ta, re, os, datetime, time, tensorflow, pytorch, scipy, statsmodels, plotly, spacy, transformers", "Free STEM Source Library", "Problem Solver",];
+            let roleIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
 
-        function type() {
-            const currentRole = roles[roleIndex];
-            const currentText = isDeleting 
-                ? currentRole.substring(0, charIndex--)
-                : currentRole.substring(0, charIndex++);
-            
-            typewriterEl.textContent = currentText;
-            typewriterEl.style.borderRight = '2px solid var(--secondary-color)';
+            function type() {
+                const currentRole = roles[roleIndex];
+                const currentText = isDeleting 
+                    ? currentRole.substring(0, charIndex--)
+                    : currentRole.substring(0, charIndex++);
+                
+                typewriterEl.textContent = currentText;
+                typewriterEl.style.borderRight = '2px solid var(--secondary-color)';
 
-            if (!isDeleting && charIndex === currentRole.length + 1) {
-                setTimeout(() => isDeleting = true, 2000);
-            } else if (isDeleting && charIndex === -1) {
-                isDeleting = false;
-                roleIndex = (roleIndex + 1) % roles.length;
+                if (!isDeleting && charIndex === currentRole.length + 1) {
+                    setTimeout(() => isDeleting = true, 2000);
+                } else if (isDeleting && charIndex === -1) {
+                    isDeleting = false;
+                    roleIndex = (roleIndex + 1) % roles.length;
+                }
+
+                const typingSpeed = isDeleting ? 75 : 150;
+                setTimeout(type, typingSpeed);
             }
-
-            const typingSpeed = isDeleting ? 75 : 150;
-            setTimeout(type, typingSpeed);
+            type();
         }
-        type();
 
         // --- Header Scroll Effect ---
         const header = document.querySelector('.header');
@@ -1055,8 +1452,10 @@
         });
         
         // Close mobile menu when a link is clicked
-        document.querySelectorAll('.nav-link').forEach(link => {
+        document.querySelectorAll('.nav-link, .auth-button').forEach(link => {
             link.addEventListener('click', () => {
+                // Don't close for profile display click
+                if (link.id === 'user-name-display') return;
                 navToggle.classList.remove('active');
                 navList.classList.remove('active');
             });
