@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>FLUX | Kinetic Momentum</title>
+    <title>PHASE LAG | Prediction Engine</title>
     <style>
         /* 
-        ========================================
-        CSS STYLING
-        Minimalist, Dark, Fullscreen
-        ========================================
-        */
+         * ==========================================
+         * CORE STYLING
+         * Minimalist, High Contrast, Cybernetic
+         * ==========================================
+         */
         :root {
-            --bg-color: #0b0c10;
-            --text-color: #66fcf1;
-            --accent-color: #45a29e;
-            --font-main: 'Courier New', Courier, monospace;
+            --bg: #050505;
+            --fg: #e0e0e0;
+            --accent-ok: #00ffaa;
+            --accent-warn: #ffcc00;
+            --accent-bad: #ff3333;
+            --grid: #1a1a1a;
+            --font-mono: 'Courier New', Courier, monospace;
         }
 
         body, html {
@@ -24,699 +27,410 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-main);
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: var(--font-mono);
             user-select: none;
             -webkit-user-select: none;
-            cursor: pointer; /* Suggest interactivity */
+            cursor: crosshair;
         }
 
-        #game-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
+        /* CANVAS LAYER */
         canvas {
             display: block;
-            box-shadow: 0 0 50px rgba(0, 0, 0, 0.5);
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
         }
 
-        /* UI OVERLAY LAYER */
-        .ui-layer {
+        /* UI LAYER */
+        #ui-layer {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Let clicks pass through to game */
+            z-index: 2;
+            pointer-events: none; /* Pass clicks to canvas */
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
             padding: 2rem;
             box-sizing: border-box;
-            z-index: 10;
+            mix-blend-mode: exclusion;
         }
 
+        /* HUD ELEMENTS */
         .hud-top {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .score-display {
-            font-size: 2rem;
-            font-weight: bold;
-            text-shadow: 0 0 10px rgba(102, 252, 241, 0.5);
-        }
-
-        .score-label {
-            font-size: 0.8rem;
-            opacity: 0.7;
+            width: 100%;
             text-transform: uppercase;
+            font-size: 12px;
             letter-spacing: 2px;
+            opacity: 0.8;
         }
 
-        .center-message {
+        .stat-block {
+            text-align: right;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        /* CENTER OVERLAYS */
+        .center-screen {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             text-align: center;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .center-message.visible {
-            opacity: 1;
+            width: 100%;
+            max-width: 600px;
+            pointer-events: auto; /* Allow clicking on buttons if needed */
         }
 
         h1 {
             font-size: 4rem;
-            margin: 0 0 1rem 0;
+            font-weight: 100;
             letter-spacing: -2px;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(102, 252, 241, 0.3);
+            margin: 0 0 1rem 0;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
         }
 
-        p.sub {
-            font-size: 1rem;
-            letter-spacing: 4px;
-            color: var(--accent-color);
+        .instruction-panel {
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #333;
+            padding: 2rem;
+            box-shadow: 0 0 50px black;
+        }
+
+        .warning-text {
+            color: var(--accent-warn);
+            font-size: 14px;
+            letter-spacing: 3px;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            animation: blink 2s infinite;
+        }
+
+        .body-text {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #aaa;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .body-text strong {
+            color: white;
+            text-decoration: underline;
+            text-decoration-color: var(--accent-ok);
+        }
+
+        .btn-start {
+            background: transparent;
+            border: 1px solid var(--fg);
+            color: var(--fg);
+            padding: 1rem 2rem;
+            font-family: var(--font-mono);
+            font-size: 16px;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
             text-transform: uppercase;
-            animation: pulse 2s infinite;
         }
 
-        @keyframes pulse {
-            0% { opacity: 0.5; }
-            50% { opacity: 1; }
-            100% { opacity: 0.5; }
+        .btn-start:hover {
+            background: var(--fg);
+            color: var(--bg);
+            box-shadow: 0 0 20px var(--fg);
         }
 
-        .tutorial-hint {
-            position: absolute;
-            bottom: 20%;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 0.8rem;
-            opacity: 0.5;
-            letter-spacing: 1px;
-            transition: opacity 0.5s;
-        }
-
+        /* UTILS */
         .hidden {
-            opacity: 0 !important;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
         }
 
+        .fade-in {
+            animation: fadeIn 1s forwards;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CRT SCANLINE EFFECT */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.1) 50%,
+                rgba(0,0,0,0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
     </style>
 </head>
 <body>
 
-<div id="game-container">
-    <canvas id="stage"></canvas>
-    
-    <div class="ui-layer">
+    <div class="scanlines"></div>
+
+    <div id="ui-layer">
         <div class="hud-top">
             <div>
-                <div class="score-label">Current</div>
-                <div class="score-display" id="score">0000</div>
+                PHASE LAG // <span id="fps-display">60</span> FPS
             </div>
-            <div style="text-align: right;">
-                <div class="score-label">Best</div>
-                <div class="score-display" id="high-score">0000</div>
+            <div class="stat-block">
+                <div class="stat-label">LATENCY</div>
+                <div class="stat-value" id="lag-display">000ms</div>
+            </div>
+            <div class="stat-block">
+                <div class="stat-label">SYNC SCORE</div>
+                <div class="stat-value" id="score-display">0000</div>
             </div>
         </div>
 
-        <div id="start-screen" class="center-message visible">
-            <h1>FLUX</h1>
-            <p class="sub">Click to Reverse Gravity</p>
-            <div style="margin-top: 30px; font-size: 0.7rem; color: #555;">AUDIO ENABLED // HEADPHONES RECOMMENDED</div>
+        <!-- START / INSTRUCTION SCREEN -->
+        <div id="start-screen" class="center-screen fade-in">
+            <h1>PHASE LAG</h1>
+            
+            <div class="instruction-panel">
+                <div class="warning-text">⚠ SYSTEM DESYNCHRONIZATION DETECTED</div>
+                
+                <div class="body-text">
+                    <p>> VISUAL FEED IS <strong>DELAYED</strong>.</p>
+                    <p>> The object you see on screen is in the <strong>PAST</strong>.</p>
+                    <p>> The actual object is invisible and moving <strong>AHEAD</strong> of what you see.</p>
+                    <p>> DO NOT react to the visual alignment.</p>
+                    <p>> You must <strong>PREDICT</strong> the future position.</p>
+                    <p style="margin-top: 1rem; color: var(--accent-ok)">
+                        [ MISSION: CLICK WHEN THE INVISIBLE OBJECT ALIGNS WITH THE TARGET ]
+                    </p>
+                </div>
+
+                <button class="btn-start" onclick="window.game.init()">INITIALIZE SEQUENCE</button>
+            </div>
         </div>
 
-        <div id="game-over-screen" class="center-message">
-            <h1 style="color: #ff4d4d; text-shadow: 0 0 20px rgba(255, 77, 77, 0.4);">SYNC LOST</h1>
-            <p class="sub">Click to Restart</p>
+        <!-- GAME OVER SCREEN -->
+        <div id="game-over-screen" class="center-screen hidden">
+            <h1 style="color: var(--accent-bad)">SIGNAL LOST</h1>
+            <div class="instruction-panel" style="text-align: center;">
+                <p>FINAL SCORE</p>
+                <h2 id="final-score" style="font-size: 3rem; margin: 0;">0000</h2>
+                <br>
+                <button class="btn-start" onclick="window.game.reset()">RECALIBRATE</button>
+            </div>
         </div>
-
-        <div id="tutorial" class="tutorial-hint">Avoid the signals. Maintain momentum.</div>
     </div>
-</div>
+
+    <canvas id="stage"></canvas>
 
 <script>
 /**
  * ============================================================================
- * FLUX ENGINE
- * A high-performance, vanilla JS game engine for the specific mechanics of FLUX.
- * 
- * Architecture:
- * 1. CONSTANTS & CONFIG
- * 2. UTILITIES (Math, Random)
- * 3. AUDIO SYSTEM (Procedural Synthesis)
- * 4. PARTICLE SYSTEM (Visual FX)
- * 5. ENTITIES (Player, Obstacles)
- * 6. GAME LOOP & STATE MANAGEMENT
- * 7. RENDERER
- * 8. INPUT HANDLING
+ * PHASE LAG - CORE ENGINE
  * ============================================================================
  */
 
-/* ==========================================================================
-   1. CONSTANTS & CONFIGURATION
-   Centralized tuning for gameplay feel.
-   ========================================================================== */
-const CONFIG = {
-    // Physics
-    GRAVITY_FORCE: 2500,     // Pixel acceleration per second squared
-    TERMINAL_VELOCITY: 800,  // Max vertical speed
-    FORWARD_SPEED_BASE: 300, // Pixels per second
-    FORWARD_SPEED_MAX: 700,  // Cap on difficulty speedup
-    SPEED_INC_PER_SEC: 5,    // How much speed increases per second of survival
-
-    // Player
-    PLAYER_SIZE: 20,
-    PLAYER_COLOR: '#66fcf1',
-    PLAYER_GLOW: '#45a29e',
-
-    // Obstacles
-    OBSTACLE_WIDTH: 60,
-    GAP_SIZE_BASE: 250,      // Starting gap height
-    GAP_SIZE_MIN: 140,       // Minimum gap height at max difficulty
-    SPAWN_DISTANCE: 400,     // Distance between obstacles
-
-    // Visuals
-    PARTICLE_COUNT_DEATH: 50,
-    TRAIL_LENGTH: 10,
-    BG_GRID_SIZE: 100,
-    
-    // Audio frequencies
-    TONE_FLIP_UP: 600,
-    TONE_FLIP_DOWN: 400,
-    TONE_SCORE: 880
-};
-
-/* ==========================================================================
-   2. UTILITIES
-   Math helpers and generic tools.
-   ========================================================================== */
-const Utils = {
-    lerp: (start, end, amt) => (1 - amt) * start + amt * end,
-    
-    clamp: (val, min, max) => Math.max(min, Math.min(max, val)),
-    
-    randRange: (min, max) => Math.random() * (max - min) + min,
-    
-    // AABB Collision Detection
-    rectIntersect: (r1, r2) => {
-        return !(r2.left > r1.right || 
-                 r2.right < r1.left || 
-                 r2.top > r1.bottom || 
-                 r2.bottom < r1.top);
-    },
-
-    // Easing function for smooth animations
-    easeOutExpo: (x) => {
-        return x === 1 ? 1 : 1 - Math.pow(2, -10 * x);
+// --- MATH UTILS ---
+const M = {
+    PI: Math.PI,
+    TWO_PI: Math.PI * 2,
+    lerp: (a, b, t) => a + (b - a) * t,
+    clamp: (v, min, max) => Math.max(min, Math.min(max, v)),
+    map: (v, iMin, iMax, oMin, oMax) => oMin + (oMax - oMin) * ((v - iMin) / (iMax - iMin)),
+    rand: (min, max) => Math.random() * (max - min) + min,
+    // Smoothstep for non-linear difficulty curves
+    smoothstep: (min, max, value) => {
+        const x = Math.max(0, Math.min(1, (value - min) / (max - min)));
+        return x * x * (3 - 2 * x);
     }
 };
 
-/* ==========================================================================
-   3. AUDIO SYSTEM
-   Procedural audio generation using Web Audio API.
-   No external assets required.
-   ========================================================================== */
-class AudioController {
+// --- AUDIO ENGINE (Web Audio API) ---
+class AudioCore {
     constructor() {
         this.ctx = null;
-        this.masterGain = null;
-        this.initialized = false;
-        
-        // Procedural settings
-        this.baseFreq = 110; 
+        this.master = null;
+        this.active = false;
     }
 
-    init() {
-        if (this.initialized) return;
-        
-        const AudioContext = window.AudioContext || window.webkitAudioContext;
-        this.ctx = new AudioContext();
-        
-        this.masterGain = this.ctx.createGain();
-        this.masterGain.gain.value = 0.3; // Prevent clipping
-        this.masterGain.connect(this.ctx.destination);
-        
-        // Start background ambience
-        this.startDrone();
-        
-        this.initialized = true;
+    start() {
+        if (this.active) return;
+        const AC = window.AudioContext || window.webkitAudioContext;
+        this.ctx = new AC();
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.3;
+        this.master.connect(this.ctx.destination);
+        this.active = true;
+        this.startHum();
     }
 
-    startDrone() {
-        // Low frequency hum
+    startHum() {
         const osc = this.ctx.createOscillator();
         osc.type = 'sawtooth';
-        osc.frequency.value = 55;
-        
+        osc.frequency.value = 50;
         const filter = this.ctx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.value = 200;
-        
-        // LFO for movement in the drone
+        filter.frequency.value = 100;
         const lfo = this.ctx.createOscillator();
-        lfo.type = 'sine';
         lfo.frequency.value = 0.1;
         const lfoGain = this.ctx.createGain();
-        lfoGain.gain.value = 100;
+        lfoGain.gain.value = 50;
         
         lfo.connect(lfoGain);
         lfoGain.connect(filter.frequency);
-        
-        const vol = this.ctx.createGain();
-        vol.gain.value = 0.4;
-        
         osc.connect(filter);
-        filter.connect(vol);
-        vol.connect(this.masterGain);
-        
+        filter.connect(this.master);
         osc.start();
         lfo.start();
     }
 
-    playFlip(direction) {
-        if (!this.ctx) return;
+    playClick(success, combo) {
+        if (!this.active) return;
         const t = this.ctx.currentTime;
-        
         const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        
-        osc.type = 'triangle';
-        // Pitch bend based on direction
-        const startFreq = direction === 1 ? CONFIG.TONE_FLIP_DOWN : CONFIG.TONE_FLIP_UP;
-        const endFreq = direction === 1 ? CONFIG.TONE_FLIP_UP : CONFIG.TONE_FLIP_DOWN;
-        
-        osc.frequency.setValueAtTime(startFreq, t);
-        osc.frequency.exponentialRampToValueAtTime(endFreq, t + 0.1);
-        
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.3, t + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
-        
-        osc.connect(gain);
-        gain.connect(this.masterGain);
-        
-        osc.start(t);
-        osc.stop(t + 0.2);
-    }
+        const env = this.ctx.createGain();
 
-    playScore() {
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(880, t);
-        osc.frequency.exponentialRampToValueAtTime(1760, t + 0.1);
-        
-        gain.gain.setValueAtTime(0, t);
-        gain.gain.linearRampToValueAtTime(0.1, t + 0.05);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-        
-        osc.connect(gain);
-        gain.connect(this.masterGain);
-        
+        if (success) {
+            // Harmonic series based on combo
+            const freq = 440 * (1 + (combo % 5) * 0.25);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, t);
+            env.gain.setValueAtTime(0, t);
+            env.gain.linearRampToValueAtTime(0.5, t + 0.01);
+            env.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+        } else {
+            // Failure noise
+            osc.type = 'square';
+            osc.frequency.setValueAtTime(100, t);
+            osc.frequency.linearRampToValueAtTime(50, t + 0.2);
+            env.gain.setValueAtTime(0.3, t);
+            env.gain.exponentialRampToValueAtTime(0.001, t + 0.2);
+        }
+
+        osc.connect(env);
+        env.connect(this.master);
         osc.start(t);
         osc.stop(t + 0.3);
     }
-
-    playCrash() {
-        if (!this.ctx) return;
-        const t = this.ctx.currentTime;
-        
-        // Noise buffer
-        const bufferSize = this.ctx.sampleRate * 0.5; // 0.5 sec
-        const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) {
-            data[i] = Math.random() * 2 - 1;
-        }
-
-        const noise = this.ctx.createBufferSource();
-        noise.buffer = buffer;
-        
-        const filter = this.ctx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1000, t);
-        filter.frequency.exponentialRampToValueAtTime(100, t + 0.4);
-
-        const gain = this.ctx.createGain();
-        gain.gain.setValueAtTime(0.5, t);
-        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.4);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.masterGain);
-        
-        noise.start(t);
-    }
 }
 
-/* ==========================================================================
-   4. PARTICLE SYSTEM
-   For trails and explosions.
-   ========================================================================== */
-class Particle {
-    constructor(x, y, color, speed, lifeTime) {
-        this.x = x;
-        this.y = y;
-        this.vx = (Math.random() - 0.5) * speed;
-        this.vy = (Math.random() - 0.5) * speed;
-        this.life = 1.0;
-        this.decay = 1.0 / lifeTime;
-        this.color = color;
-        this.size = Math.random() * 4 + 1;
+// --- LAG BUFFER SYSTEM ---
+// Stores the 'past' to render it later
+class TimeBuffer {
+    constructor(capacity = 600) { // ~5 seconds at 120hz
+        this.capacity = capacity;
+        this.data = new Float32Array(capacity);
+        this.times = new Float64Array(capacity);
+        this.head = 0;
+        this.length = 0;
     }
 
-    update(dt) {
-        this.x += this.vx * dt;
-        this.y += this.vy * dt;
-        this.life -= this.decay * dt;
+    push(val, time) {
+        this.data[this.head] = val;
+        this.times[this.head] = time;
+        this.head = (this.head + 1) % this.capacity;
+        if (this.length < this.capacity) this.length++;
     }
 
-    draw(ctx) {
-        ctx.globalAlpha = this.life;
-        ctx.fillStyle = this.color;
-        ctx.beginPath();
-        ctx.rect(this.x, this.y, this.size, this.size);
-        ctx.fill();
-        ctx.globalAlpha = 1.0;
-    }
-}
-
-class ParticleSystem {
-    constructor() {
-        this.particles = [];
-    }
-
-    emit(x, y, count, color, speed = 200) {
-        for (let i = 0; i < count; i++) {
-            this.particles.push(new Particle(x, y, color, speed, Utils.randRange(0.5, 1.5)));
-        }
-    }
-
-    emitTrail(x, y, color) {
-        // Trails drift backwards relative to player movement
-        const p = new Particle(x, y, color, 10, 0.4);
-        p.vx = -100; // Move left
-        p.vy = (Math.random() - 0.5) * 20;
-        this.particles.push(p);
-    }
-
-    update(dt) {
-        for (let i = this.particles.length - 1; i >= 0; i--) {
-            const p = this.particles[i];
-            p.update(dt);
-            if (p.life <= 0) {
-                this.particles.splice(i, 1);
+    // Retrieve value from 'delay' seconds ago
+    getDelayed(now, delay) {
+        if (this.length === 0) return 0.5;
+        const targetTime = now - delay;
+        
+        // Scan backward from head (optimized for short buffers)
+        for(let i = 0; i < this.length; i++) {
+            const idx = (this.head - 1 - i + this.capacity) % this.capacity;
+            const t = this.times[idx];
+            if (t <= targetTime) {
+                // Interpolate with next frame (which is actually forward in buffer index)
+                const nextIdx = (idx + 1) % this.capacity;
+                const tNext = this.times[nextIdx];
+                // Avoid wrapping interpolation errors
+                if (tNext < t) return this.data[idx]; 
+                
+                const ratio = (targetTime - t) / (tNext - t || 1); // Avoid div/0
+                return M.lerp(this.data[idx], this.data[nextIdx], ratio);
             }
         }
-    }
-
-    draw(ctx) {
-        for (const p of this.particles) {
-            p.draw(ctx);
-        }
-    }
-    
-    clear() {
-        this.particles = [];
+        // Fallback to oldest
+        const tail = (this.head - this.length + this.capacity) % this.capacity;
+        return this.data[tail];
     }
 }
 
-/* ==========================================================================
-   5. ENTITIES
-   Player and Obstacle logic.
-   ========================================================================== */
-class Player {
-    constructor(x, y) {
-        this.startX = x;
-        this.startY = y;
+// --- MOTION GENERATOR ---
+// Creates the movement patterns for the object
+class MotionEngine {
+    constructor() {
         this.reset();
     }
 
     reset() {
-        this.x = this.startX;
-        this.y = this.startY;
-        this.vy = 0;
-        this.gravityDir = 1; // 1 = Down, -1 = Up
-        this.width = CONFIG.PLAYER_SIZE;
-        this.height = CONFIG.PLAYER_SIZE;
-        this.isDead = false;
-        this.rotation = 0;
+        this.time = 0;
+        this.pos = 0.5;
+        this.type = 0; // 0:Sine, 1:Bounce, 2:Noise
+        this.speed = 1.0;
     }
 
-    flip() {
-        if (this.isDead) return;
-        this.gravityDir *= -1;
-        // Small impulse to make it feel responsive immediately
-        // this.vy = this.gravityDir * 50; 
-    }
-
-    update(dt) {
-        if (this.isDead) return;
-
-        // Apply gravity acceleration based on direction
-        // If gravityDir is 1, we accelerate down (+y)
-        // If gravityDir is -1, we accelerate up (-y)
-        const acc = CONFIG.GRAVITY_FORCE * this.gravityDir;
+    update(dt, difficulty) {
+        this.time += dt * this.speed;
         
-        this.vy += acc * dt;
+        // Difficulty scales speed and complexity
+        this.speed = 1.0 + (difficulty * 0.5);
         
-        // Clamp velocity
-        this.vy = Utils.clamp(this.vy, -CONFIG.TERMINAL_VELOCITY, CONFIG.TERMINAL_VELOCITY);
+        // Phase shift slowly to prevent pure memorization
+        const phase = difficulty * 10;
+
+        // Combine multiple sine waves for unpredictable but smooth periodic motion
+        const s1 = Math.sin(this.time * 1.5 + phase);
+        const s2 = Math.cos(this.time * 2.3);
+        const s3 = Math.sin(this.time * 0.5);
+
+        // Normalize approx -2 to 2 -> 0 to 1
+        let val = (s1 + s2 * 0.5 + s3 * 0.2) / 2.0; 
         
-        // Apply velocity
-        this.y += this.vy * dt;
-
-        // Rotation based on velocity for visual flair
-        const targetRot = (this.vy / CONFIG.TERMINAL_VELOCITY) * (Math.PI / 4);
-        this.rotation = Utils.lerp(this.rotation, targetRot, dt * 10);
-    }
-
-    getBounds() {
-        return {
-            left: this.x - this.width/2,
-            right: this.x + this.width/2,
-            top: this.y - this.height/2,
-            bottom: this.y + this.height/2
-        };
-    }
-
-    draw(ctx) {
-        if (this.isDead) return;
-
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.rotate(this.rotation);
+        // Map to screen coordinates 0..1
+        this.pos = 0.5 + (val * 0.4); 
+        this.pos = M.clamp(this.pos, 0.05, 0.95);
         
-        // Glow
-        ctx.shadowBlur = 20;
-        ctx.shadowColor = CONFIG.PLAYER_GLOW;
-        ctx.fillStyle = CONFIG.PLAYER_COLOR;
-        
-        // Draw Main Body (Square with slightly rounded feel via rendering trick or just rect)
-        ctx.fillRect(-this.width/2, -this.height/2, this.width, this.height);
-        
-        // Inner core
-        ctx.fillStyle = '#fff';
-        ctx.shadowBlur = 0;
-        ctx.fillRect(-this.width/4, -this.height/4, this.width/2, this.height/2);
-
-        ctx.restore();
+        return this.pos;
     }
 }
 
-class ObstacleManager {
-    constructor() {
-        this.obstacles = [];
-        this.timer = 0;
-        this.passedCount = 0;
-    }
-
-    reset() {
-        this.obstacles = [];
-        this.timer = 0;
-        this.passedCount = 0;
-    }
-
-    update(dt, gameSpeed, canvasWidth, canvasHeight) {
-        // Spawn logic
-        // We spawn based on distance moved (time * speed) or just simple timer
-        // Let's use distance approximation
-        const spawnInterval = CONFIG.SPAWN_DISTANCE / gameSpeed;
-        
-        this.timer += dt;
-        if (this.timer >= spawnInterval) {
-            this.spawn(canvasWidth, canvasHeight, gameSpeed);
-            this.timer = 0;
-        }
-
-        // Move and Cull
-        for (let i = this.obstacles.length - 1; i >= 0; i--) {
-            const obs = this.obstacles[i];
-            obs.x -= gameSpeed * dt;
-
-            // Remove if off screen
-            if (obs.x + obs.width < 0) {
-                this.obstacles.splice(i, 1);
-            }
-        }
-    }
-
-    spawn(x, h, speed) {
-        // Calculate difficulty factor (0.0 to 1.0)
-        // Cap speed at max, so difficulty is ratio of current speed vs max
-        const difficulty = Math.min(1.0, (speed - CONFIG.FORWARD_SPEED_BASE) / (CONFIG.FORWARD_SPEED_MAX - CONFIG.FORWARD_SPEED_BASE));
-        
-        const gap = Utils.lerp(CONFIG.GAP_SIZE_BASE, CONFIG.GAP_SIZE_MIN, difficulty);
-        const minMargin = 50; // Minimum solid wall height
-        const availableHeight = h - gap - (minMargin * 2);
-        
-        const randomOffset = Math.random() * availableHeight;
-        const gapTopY = minMargin + randomOffset;
-        const gapBottomY = gapTopY + gap;
-
-        // Add pair of rectangles (Top and Bottom)
-        this.obstacles.push({
-            x: x,
-            width: CONFIG.OBSTACLE_WIDTH,
-            type: 'top',
-            top: 0,
-            bottom: gapTopY,
-            passed: false
-        });
-
-        this.obstacles.push({
-            x: x,
-            width: CONFIG.OBSTACLE_WIDTH,
-            type: 'bottom',
-            top: gapBottomY,
-            bottom: h,
-            passed: false
-        });
-    }
-
-    draw(ctx) {
-        ctx.fillStyle = '#222';
-        ctx.strokeStyle = '#333';
-        ctx.lineWidth = 2;
-
-        for (const obs of this.obstacles) {
-            ctx.beginPath();
-            ctx.rect(obs.x, obs.top, obs.width, obs.bottom - obs.top);
-            
-            // Subtle gradient
-            const grad = ctx.createLinearGradient(obs.x, obs.top, obs.x + obs.width, obs.top);
-            grad.addColorStop(0, '#1c1c24');
-            grad.addColorStop(1, '#2a2a35');
-            ctx.fillStyle = grad;
-            
-            ctx.fill();
-            ctx.stroke();
-
-            // Tech detail line
-            ctx.beginPath();
-            ctx.strokeStyle = '#45a29e';
-            ctx.globalAlpha = 0.3;
-            if (obs.type === 'top') {
-                ctx.moveTo(obs.x, obs.bottom - 5);
-                ctx.lineTo(obs.x + obs.width, obs.bottom - 5);
-            } else {
-                ctx.moveTo(obs.x, obs.top + 5);
-                ctx.lineTo(obs.x + obs.width, obs.top + 5);
-            }
-            ctx.stroke();
-            ctx.globalAlpha = 1.0;
-        }
-    }
-
-    checkCollisions(player, audio) {
-        const pBounds = player.getBounds();
-        let hit = false;
-        let scoreIncrement = 0;
-
-        // Group obstacles by X to check for "passing" logic
-        // We only increment score once per vertical slice passed
-        
-        for (const obs of this.obstacles) {
-            // Collision
-            const obsBounds = {
-                left: obs.x,
-                right: obs.x + obs.width,
-                top: obs.top,
-                bottom: obs.bottom
-            };
-
-            if (Utils.rectIntersect(pBounds, obsBounds)) {
-                hit = true;
-            }
-
-            // Scoring
-            if (!obs.passed && player.x > obs.x + obs.width) {
-                obs.passed = true;
-                // Only count the top one to avoid double score
-                if (obs.type === 'top') {
-                    scoreIncrement++;
-                    audio.playScore();
-                }
-            }
-        }
-        
-        return { hit, scoreIncrement };
-    }
-}
-
-/* ==========================================================================
-   6. GAME ENGINE
-   The central brain connecting everything.
-   ========================================================================== */
-class Game {
+// --- RENDERER ---
+class Renderer {
     constructor() {
         this.canvas = document.getElementById('stage');
-        this.ctx = this.canvas.getContext('2d', { alpha: false }); // Optimize
-        
-        this.width = window.innerWidth;
-        this.height = window.innerHeight;
-        
-        this.audio = new AudioController();
-        this.particles = new ParticleSystem();
-        this.player = new Player(this.width * 0.2, this.height * 0.5);
-        this.obstacles = new ObstacleManager();
-        
-        this.state = 'MENU'; // MENU, PLAYING, GAMEOVER
-        this.lastTime = 0;
-        this.score = 0;
-        this.highScore = 0;
-        this.gameSpeed = CONFIG.FORWARD_SPEED_BASE;
-        this.distance = 0;
-
-        // Shake effect
-        this.shakeTime = 0;
-        this.shakeMag = 0;
-
-        // Bind Resize
-        window.addEventListener('resize', () => this.resize());
+        this.ctx = this.canvas.getContext('2d', { alpha: false });
+        this.width = 0;
+        this.height = 0;
         this.resize();
-
-        // Bind Input
-        this.setupInput();
-
-        // Start Loop
-        requestAnimationFrame((t) => this.loop(t));
+        window.addEventListener('resize', () => this.resize());
+        
+        this.particles = [];
     }
 
     resize() {
@@ -724,194 +438,246 @@ class Game {
         this.height = window.innerHeight;
         this.canvas.width = this.width;
         this.canvas.height = this.height;
-        
-        // Keep player relative if in menu
-        if (this.state === 'MENU') {
-            this.player.y = this.height * 0.5;
-            this.player.x = this.width * 0.2;
-            this.player.startY = this.height * 0.5;
-            this.player.startX = this.width * 0.2;
+    }
+
+    spawnParticles(x, y, color, count = 10) {
+        for(let i=0; i<count; i++) {
+            this.particles.push({
+                x, y,
+                vx: M.rand(-5, 5),
+                vy: M.rand(-5, 5),
+                life: 1.0,
+                color
+            });
         }
     }
 
-    setupInput() {
-        const trigger = (e) => {
-            // Prevent default zooming or scrolling on touch
-            if (e.type === 'touchstart' || e.code === 'Space') {
-                e.preventDefault();
-            }
-            this.handleInput();
-        };
-
-        window.addEventListener('mousedown', trigger);
-        window.addEventListener('touchstart', trigger, {passive: false});
-        window.addEventListener('keydown', (e) => {
-            if (e.code === 'Space') trigger(e);
-        });
-    }
-
-    handleInput() {
-        // Init audio on first interaction
-        this.audio.init();
-
-        if (this.state === 'MENU' || this.state === 'GAMEOVER') {
-            this.resetGame();
-            this.state = 'PLAYING';
-            this.updateUI();
-        } else if (this.state === 'PLAYING') {
-            this.player.flip();
-            this.audio.playFlip(this.player.gravityDir);
-        }
-    }
-
-    resetGame() {
-        this.player.reset();
-        this.obstacles.reset();
-        this.particles.clear();
-        this.score = 0;
-        this.gameSpeed = CONFIG.FORWARD_SPEED_BASE;
-        this.distance = 0;
-        this.shakeTime = 0;
-        
-        // Hide UI screens
-        document.getElementById('start-screen').classList.remove('visible');
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('game-over-screen').classList.remove('visible');
-        document.getElementById('tutorial').classList.add('hidden');
-    }
-
-    gameOver() {
-        this.state = 'GAMEOVER';
-        this.player.isDead = true;
-        this.audio.playCrash();
-        
-        // Screen Shake
-        this.shakeTime = 0.5;
-        this.shakeMag = 20;
-
-        // Explosion
-        this.particles.emit(this.player.x, this.player.y, CONFIG.PARTICLE_COUNT_DEATH, CONFIG.PLAYER_COLOR, 400);
-
-        // UI
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
-            document.getElementById('high-score').textContent = this.highScore.toString().padStart(4, '0');
-        }
-        document.getElementById('game-over-screen').classList.add('visible');
-    }
-
-    update(dt) {
-        if (this.state === 'PLAYING') {
-            // Update Speed (Difficulty)
-            if (this.gameSpeed < CONFIG.FORWARD_SPEED_MAX) {
-                this.gameSpeed += CONFIG.SPEED_INC_PER_SEC * dt;
-            }
-
-            // Player Physics
-            this.player.update(dt);
-
-            // Bounds Check (Floor/Ceiling)
-            if (this.player.y < 0 || this.player.y > this.height) {
-                this.gameOver();
-            }
-
-            // Obstacles
-            this.obstacles.update(dt, this.gameSpeed, this.width, this.height);
-
-            // Collisions
-            const result = this.obstacles.checkCollisions(this.player, this.audio);
-            if (result.hit) {
-                this.gameOver();
-            }
-            if (result.scoreIncrement > 0) {
-                this.score += result.scoreIncrement;
-                document.getElementById('score').textContent = this.score.toString().padStart(4, '0');
-            }
-
-            // Particles (Trail)
-            // Emit trail periodically
-            if (Math.random() < 0.5) {
-                this.particles.emitTrail(this.player.x, this.player.y, CONFIG.PLAYER_COLOR);
-            }
-        }
-
-        // Always update particles
-        this.particles.update(dt);
-
-        // Screen Shake decay
-        if (this.shakeTime > 0) {
-            this.shakeTime -= dt;
-            if (this.shakeTime < 0) this.shakeTime = 0;
-        }
-    }
-
-    draw() {
-        // Clear background
-        this.ctx.fillStyle = '#0b0c10';
+    render(game) {
+        // Clear with trails
+        this.ctx.fillStyle = 'rgba(5, 5, 5, 0.2)';
         this.ctx.fillRect(0, 0, this.width, this.height);
 
-        // Draw animated background grid
-        this.drawBackground();
-
-        // Apply Screen Shake
-        this.ctx.save();
-        if (this.shakeTime > 0) {
-            const mag = this.shakeMag * (this.shakeTime / 0.5);
-            const dx = (Math.random() - 0.5) * mag;
-            const dy = (Math.random() - 0.5) * mag;
-            this.ctx.translate(dx, dy);
-        }
-
-        this.obstacles.draw(this.ctx);
-        this.particles.draw(this.ctx);
-        this.player.draw(this.ctx);
-
-        this.ctx.restore();
-    }
-
-    drawBackground() {
-        this.ctx.strokeStyle = '#1f2833';
-        this.ctx.lineWidth = 1;
+        const cx = this.width / 2;
+        const cy = this.height / 2;
         
-        // Offset based on time to simulate movement
-        const offset = (Date.now() / 1000 * this.gameSpeed * 0.5) % CONFIG.BG_GRID_SIZE;
+        // 1. Draw Target Zone
+        // Target is static center for this version of mechanic to focus on lag
+        const targetW = this.width * game.targetSize;
+        const targetColor = game.inZone ? '#00ffaa' : '#333';
         
+        this.ctx.strokeStyle = targetColor;
+        this.ctx.lineWidth = 2;
         this.ctx.beginPath();
-        // Vertical lines moving left
-        for (let x = -offset; x < this.width; x += CONFIG.BG_GRID_SIZE) {
-            this.ctx.moveTo(x, 0);
-            this.ctx.lineTo(x, this.height);
-        }
-        // Horizontal lines static (or slow parallax)
-        for (let y = 0; y < this.height; y += CONFIG.BG_GRID_SIZE) {
-            this.ctx.moveTo(0, y);
-            this.ctx.lineTo(this.width, y);
-        }
+        this.ctx.moveTo(cx - targetW/2, 0);
+        this.ctx.lineTo(cx - targetW/2, this.height);
+        this.ctx.moveTo(cx + targetW/2, 0);
+        this.ctx.lineTo(cx + targetW/2, this.height);
         this.ctx.stroke();
+
+        // Target Center Line
+        this.ctx.setLineDash([5, 15]);
+        this.ctx.beginPath();
+        this.ctx.moveTo(cx, 0);
+        this.ctx.lineTo(cx, this.height);
+        this.ctx.stroke();
+        this.ctx.setLineDash([]);
+
+        // 2. Draw Delayed Object (The "Ghost" Player sees)
+        // Converting normalized pos (0..1) to screen width
+        const drawX = game.delayedPos * this.width;
+        
+        this.ctx.shadowBlur = 20;
+        this.ctx.shadowColor = '#00ffaa';
+        this.ctx.fillStyle = '#e0e0e0';
+        this.ctx.fillRect(drawX - 4, 0, 8, this.height);
+        this.ctx.shadowBlur = 0;
+
+        // 3. Draw "Real" Object Feedback (Only when triggering)
+        // If the player clicks, we flash where the object actually was
+        if (game.feedbackTimer > 0) {
+            const alpha = game.feedbackTimer;
+            const realX = game.feedbackPos * this.width;
+            
+            this.ctx.fillStyle = game.lastHit ? '#00ffaa' : '#ff3333';
+            this.ctx.globalAlpha = alpha;
+            this.ctx.fillRect(realX - 2, 0, 4, this.height);
+            
+            // Draw connection line
+            this.ctx.beginPath();
+            this.ctx.moveTo(realX, cy);
+            this.ctx.lineTo(cx, cy);
+            this.ctx.strokeStyle = game.lastHit ? '#00ffaa' : '#ff3333';
+            this.ctx.stroke();
+            
+            // Text
+            this.ctx.font = "14px Courier New";
+            this.ctx.fillText(game.lastHit ? "SYNC" : "MISS", realX + 10, cy);
+            
+            this.ctx.globalAlpha = 1.0;
+        }
+
+        // 4. Particles
+        for(let i=this.particles.length-1; i>=0; i--) {
+            let p = this.particles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.life -= 0.05;
+            if(p.life <= 0) { this.particles.splice(i,1); continue; }
+            
+            this.ctx.fillStyle = p.color;
+            this.ctx.globalAlpha = p.life;
+            this.ctx.fillRect(p.x, p.y, 3, 3);
+        }
+        this.ctx.globalAlpha = 1.0;
+    }
+}
+
+// --- MAIN GAME LOGIC ---
+class Game {
+    constructor() {
+        this.audio = new AudioCore();
+        this.renderer = new Renderer();
+        this.motion = new MotionEngine();
+        this.buffer = new TimeBuffer();
+        
+        this.state = 'INIT'; // INIT, PLAY, GAMEOVER
+        this.score = 0;
+        this.combo = 0;
+        this.difficulty = 0.0;
+        
+        // Physics
+        this.realPos = 0.5;
+        this.delayedPos = 0.5;
+        this.lagDuration = 0.4; // Starting lag (seconds)
+        
+        this.targetSize = 0.1; // 10% screen width
+        this.inZone = false;
+        
+        // Feedback
+        this.feedbackTimer = 0;
+        this.feedbackPos = 0;
+        this.lastHit = false;
+
+        // Loop
+        this.lastTime = 0;
+        
+        // UI Binds
+        this.uiScore = document.getElementById('score-display');
+        this.uiLag = document.getElementById('lag-display');
+        this.uiStart = document.getElementById('start-screen');
+        this.uiGameOver = document.getElementById('game-over-screen');
+        
+        this.bindInput();
+        requestAnimationFrame((t) => this.loop(t));
     }
 
-    updateUI() {
-        // handled in logic events
+    bindInput() {
+        const trigger = (e) => {
+            if (e.type === 'keydown' && e.code !== 'Space') return;
+            if (this.state === 'PLAY') this.attemptHit();
+        };
+        window.addEventListener('mousedown', trigger);
+        window.addEventListener('keydown', trigger);
+        window.addEventListener('touchstart', (e) => { e.preventDefault(); trigger(e); }, {passive: false});
+    }
+
+    init() {
+        this.audio.start();
+        this.uiStart.classList.add('hidden');
+        this.uiGameOver.classList.add('hidden');
+        this.state = 'PLAY';
+        this.score = 0;
+        this.combo = 0;
+        this.difficulty = 0.0;
+        this.lagDuration = 0.3;
+        this.motion.reset();
+        this.updateHUD();
+    }
+
+    reset() {
+        this.init();
+    }
+
+    attemptHit() {
+        // Core Mechanic: Check REAL position, not displayed position
+        const dist = Math.abs(this.realPos - 0.5); // 0.5 is center
+        const hitZone = this.targetSize / 2;
+        
+        this.feedbackPos = this.realPos;
+        this.feedbackTimer = 1.0;
+        
+        if (dist < hitZone) {
+            // Hit
+            this.combo++;
+            this.score += 100 * this.combo;
+            this.lastHit = true;
+            this.audio.playClick(true, this.combo);
+            this.renderer.spawnParticles(this.renderer.width * 0.5, this.renderer.height * 0.5, '#00ffaa', 20);
+            
+            // Increase Difficulty
+            this.difficulty += 0.05;
+            this.lagDuration = 0.3 + (this.difficulty * 0.2); // Lag increases
+            
+        } else {
+            // Miss
+            this.combo = 0;
+            this.lastHit = false;
+            this.audio.playClick(false, 0);
+            this.renderer.spawnParticles(this.renderer.width * 0.5, this.renderer.height * 0.5, '#ff3333', 20);
+            
+            // Penalty
+            this.score -= 50;
+            if(this.score < 0) this.endGame();
+        }
+        
+        this.updateHUD();
+    }
+
+    endGame() {
+        this.state = 'GAMEOVER';
+        document.getElementById('final-score').innerText = this.score;
+        this.uiGameOver.classList.remove('hidden');
+    }
+
+    updateHUD() {
+        this.uiScore.innerText = this.score.toString().padStart(4, '0');
+        this.uiLag.innerText = Math.floor(this.lagDuration * 1000) + 'ms';
+        // Color lag red if high
+        this.uiLag.style.color = this.lagDuration > 0.6 ? '#ff3333' : '#e0e0e0';
     }
 
     loop(timestamp) {
-        // Calculate Delta Time
-        const dt = Math.min((timestamp - this.lastTime) / 1000, 0.1); // Cap dt at 0.1s
+        const dt = (timestamp - this.lastTime) / 1000;
         this.lastTime = timestamp;
 
-        this.update(dt);
-        this.draw();
+        if (this.state === 'PLAY') {
+            // 1. Update Physics (Real World)
+            this.realPos = this.motion.update(dt, this.difficulty);
+            
+            // 2. Store in Buffer
+            this.buffer.push(this.realPos, timestamp / 1000);
+            
+            // 3. Retrieve Delayed State (Visual World)
+            this.delayedPos = this.buffer.getDelayed(timestamp / 1000, this.lagDuration);
+            
+            // 4. Update Logic
+            if (this.feedbackTimer > 0) this.feedbackTimer -= dt * 2;
+        } 
+        else if (this.state === 'INIT') {
+            // Idle background motion
+            this.realPos = this.motion.update(dt, 0);
+            this.buffer.push(this.realPos, timestamp/1000);
+            this.delayedPos = this.buffer.getDelayed(timestamp/1000, 0.2);
+        }
 
+        // Draw Frame
+        this.renderer.render(this);
         requestAnimationFrame((t) => this.loop(t));
     }
 }
 
-// ==========================================
-// INITIALIZATION
-// ==========================================
-window.onload = () => {
-    const game = new Game();
-};
+// Start
+window.game = new Game();
 
 </script>
 </body>
