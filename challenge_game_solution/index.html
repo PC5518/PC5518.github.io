@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VELOXIS - AI BENCHMARK</title>
+    <style>
+        :root {
+            --bg-color: #050505;
+            --accent-color: #00f3ff;
+            --accent-glow: rgba(0, 243, 255, 0.6);
+            --enemy-color: #ff0055;
+            --ui-font: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: none;
+            cursor: none; /* Hide cursor for AD look */
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: var(--bg-color);
+            font-family: var(--ui-font);
+        }
+
+        /* Scanline overlay */
+        body::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255, 255, 255, 0),
+                rgba(255, 255, 255, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%,
+                rgba(0, 0, 0, 0.1)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        #gameCanvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* Top Left Brand Label */
+        .brand-tag {
+            position: absolute;
+            top: 40px;
+            left: 40px;
+        }
+
+        .brand-tag h1 {
+            color: white;
+            font-size: 2rem;
+            margin: 0;
+            font-weight: 900;
+            letter-spacing: -1px;
+            text-transform: uppercase;
+            font-style: italic;
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .brand-tag span {
+            color: var(--accent-color);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            font-weight: 700;
+            display: block;
+            margin-top: 5px;
+        }
+
+        /* Center Score */
+        .score-container {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+        }
+
+        #score-display {
+            font-size: 5rem;
+            font-weight: 900;
+            color: rgba(255, 255, 255, 0.1); /* Subtle score for ad background */
+            margin: 0;
+            line-height: 1;
+        }
+
+        /* Demo Mode Badge */
+        .demo-badge {
+            position: absolute;
+            top: 40px;
+            right: 40px;
+            background: var(--enemy-color);
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 2px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 0, 85, 0.6);
+            animation: pulse 1s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { opacity: 0.8; }
+            to { opacity: 1; transform: scale(1.05); }
+        }
+
+        #flash {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 30;
+            transition: opacity 0.1s;
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="gameCanvas"></canvas>
+    <div id="flash"></div>
+
+    <div id="ui-layer">
+        <div class="brand-tag">
+            <h1>VELOXIS</h1>
+            <span>Gravity. Speed. Survival.</span>
+        </div>
+
+        <div class="demo-badge">AI AUTO-PILOT</div>
+
+        <div class="score-container">
+            <h2 id="score-display">0m</h2>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * VELOXIS: ADVERTISEMENT MODE
+         * Automated Gameplay Logic
+         */
+
+        const CONFIG = {
+            colors: {
+                bg: '#050505',
+                player: '#00f3ff',
+                obstacle: '#ffffff',
+                mine: '#ffaa00',
+                piston: '#ff0055'
+            },
+            physics: {
+                gravity: 2800, 
+                terminalVelocity: 900,
+                baseSpeed: 500
+            },
+            gameplay: {
+                initialGap: 280,
+                minGap: 160, // Slightly easier for AI to look smooth
+                obstacleWidth: 60,
+                spawnDistance: 450,
+                difficultyRamp: 0.05
+            }
+        };
+
+        const MathUtils = {
+            lerp: (a, b, t) => a + (b - a) * t,
+            clamp: (val, min, max) => Math.max(min, Math.min(max, val)),
+            randRange: (min, max) => Math.random() * (max - min) + min
+        };
+
+        // --- PARTICLE SYSTEM ---
+        class Particle {
+            constructor(x, y, color, speed) {
+                this.x = x;
+                this.y = y;
+                this.color = color;
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = Math.random() * speed;
+                this.vx = Math.cos(angle) * velocity;
+                this.vy = Math.sin(angle) * velocity;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.03 + 0.01;
+                this.size = Math.random() * 4 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.life -= this.decay;
+                this.vx *= 0.95; 
+                this.vy *= 0.95;
+            }
+
+            draw(ctx) {
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1.0;
+            }
+        }
+
+        // --- PLAYER ---
+        class Player {
+            constructor() {
+                this.radius = 12;
+                this.x = 0; 
+                this.y = 0;
+                this.vy = 0;
+                this.gravityDir = 1; 
+                this.trail = [];
+                this.maxTrail = 20;
+            }
+
+            reset(width, height) {
+                this.x = width * 0.2;
+                this.y = height * 0.5;
+                this.vy = 0;
+                this.gravityDir = 1;
+                this.trail = [];
+            }
+
+            flip() {
+                this.gravityDir *= -1;
+                this.vy = this.gravityDir * 150; 
+            }
+
+            update(dt, height) {
+                const gravity = CONFIG.physics.gravity * this.gravityDir;
+                this.vy += gravity * dt;
+                this.vy = MathUtils.clamp(this.vy, -CONFIG.physics.terminalVelocity, CONFIG.physics.terminalVelocity);
+                this.y += this.vy * dt;
+
+                let collided = false;
+                if (this.y < this.radius) {
+                    this.y = this.radius;
+                    this.vy = 0;
+                    collided = true;
+                }
+                if (this.y > height - this.radius) {
+                    this.y = height - this.radius;
+                    this.vy = 0;
+                    collided = true;
+                }
+
+                this.trail.unshift({x: this.x, y: this.y});
+                if (this.trail.length > this.maxTrail) this.trail.pop();
+
+                return collided;
+            }
+
+            draw(ctx) {
+                // Trail
+                if (this.trail.length > 1) {
+                    ctx.beginPath();
+                    ctx.moveTo(this.trail[0].x, this.trail[0].y);
+                    for (let i = 1; i < this.trail.length; i++) {
+                        ctx.lineTo(this.trail[i].x, this.trail[i].y);
+                    }
+                    const grad = ctx.createLinearGradient(
+                        this.trail[0].x, this.trail[0].y, 
+                        this.trail[this.trail.length-1].x, this.trail[this.trail.length-1].y
+                    );
+                    grad.addColorStop(0, CONFIG.colors.player);
+                    grad.addColorStop(1, 'rgba(0, 243, 255, 0)');
+                    ctx.strokeStyle = grad;
+                    ctx.lineWidth = 4;
+                    ctx.lineCap = 'round';
+                    ctx.lineJoin = 'round';
+                    ctx.stroke();
+                }
+
+                // Body
+                ctx.shadowBlur = 20;
+                ctx.shadowColor = CONFIG.colors.player;
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+        }
+
+        // --- OBSTACLES ---
+        class ObstacleManager {
+            constructor() {
+                this.obstacles = [];
+                this.spawnX = 0;
+            }
+
+            reset(width) {
+                this.obstacles = [];
+                this.spawnX = width + 100;
+            }
+
+            update(dt, speed, width, height, difficulty) {
+                for (let i = this.obstacles.length - 1; i >= 0; i--) {
+                    let obs = this.obstacles[i];
+                    obs.x -= speed * dt;
+                    if (obs.x + obs.w < 0) this.obstacles.splice(i, 1);
+                }
+
+                this.spawnX -= speed * dt;
+                if (this.spawnX <= width) {
+                    this.spawnObstacle(width, height, difficulty);
+                    const dist = Math.max(
+                        CONFIG.gameplay.spawnDistance * 0.6,
+                        CONFIG.gameplay.spawnDistance - (difficulty * 50)
+                    );
+                    this.spawnX = width + dist;
+                }
+            }
+
+            spawnObstacle(width, height, difficulty) {
+                let gap = MathUtils.lerp(CONFIG.gameplay.initialGap, CONFIG.gameplay.minGap, Math.min(difficulty * 0.1, 1));
+                gap += MathUtils.randRange(-20, 20);
+
+                const minY = 50 + gap/2;
+                const maxY = height - 50 - gap/2;
+                const centerY = MathUtils.randRange(minY, maxY);
+                const w = CONFIG.gameplay.obstacleWidth;
+
+                const rand = Math.random();
+                let type = 'WALL';
+                if (rand > 0.7) type = 'MINE'; 
+                else if (rand > 0.4) type = 'PISTON'; 
+
+                this.obstacles.push({
+                    type: type,
+                    x: width,
+                    w: w,
+                    topH: centerY - gap/2,
+                    bottomY: centerY + gap/2,
+                    centerY: centerY,
+                    gapSize: gap,
+                    passed: false
+                });
+            }
+
+            draw(ctx, height) {
+                this.obstacles.forEach(obs => {
+                    if (obs.type === 'WALL') {
+                        ctx.fillStyle = CONFIG.colors.obstacle;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = 'rgba(255,255,255,0.5)';
+                        ctx.fillRect(obs.x, 0, obs.w, obs.topH);
+                        ctx.fillRect(obs.x, obs.bottomY, obs.w, height - obs.bottomY);
+                    } else if (obs.type === 'MINE') {
+                        ctx.fillStyle = CONFIG.colors.mine;
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = CONFIG.colors.mine;
+                        const size = 50;
+                        const cy = obs.centerY;
+                        const cx = obs.x + obs.w/2;
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy - size/2);
+                        ctx.lineTo(cx + size/2, cy);
+                        ctx.lineTo(cx, cy + size/2);
+                        ctx.lineTo(cx - size/2, cy);
+                        ctx.fill();
+                    } else if (obs.type === 'PISTON') {
+                        ctx.fillStyle = CONFIG.colors.piston;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = CONFIG.colors.piston;
+                        if (obs.centerY < height / 2) {
+                            ctx.fillRect(obs.x, 0, obs.w, obs.centerY + 40);
+                        } else {
+                            ctx.fillRect(obs.x, obs.centerY - 40, obs.w, height);
+                        }
+                    }
+                    ctx.shadowBlur = 0;
+                });
+            }
+
+            checkCollision(player) {
+                const pR = player.radius * 0.8;
+                for (let obs of this.obstacles) {
+                    if (player.x + pR > obs.x && player.x - pR < obs.x + obs.w) {
+                        if (obs.type === 'WALL') {
+                            if (player.y - pR < obs.topH) return true;
+                            if (player.y + pR > obs.bottomY) return true;
+                        } else if (obs.type === 'MINE') {
+                            const size = 40;
+                            if (player.y + pR > obs.centerY - size/2 && player.y - pR < obs.centerY + size/2) return true;
+                        } else if (obs.type === 'PISTON') {
+                            const h = window.innerHeight;
+                            if (obs.centerY < h / 2) {
+                                if (player.y - pR < obs.centerY + 40) return true;
+                            } else {
+                                if (player.y + pR > obs.centerY - 40) return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        // --- GAME CORE ---
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d', { alpha: false });
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+
+                this.player = new Player();
+                this.obstacles = new ObstacleManager();
+                this.particles = [];
+
+                this.score = 0;
+                this.distance = 0;
+                this.difficulty = 0;
+                this.gameSpeed = CONFIG.physics.baseSpeed;
+                this.lastTime = 0;
+
+                this.scoreDisplay = document.getElementById('score-display');
+                this.flash = document.getElementById('flash');
+
+                this.resize();
+                window.addEventListener('resize', () => this.resize());
+                
+                // Start immediately
+                this.resetGame();
+                requestAnimationFrame(t => this.loop(t));
+            }
+
+            resize() {
+                this.width = window.innerWidth;
+                this.height = window.innerHeight;
+                this.canvas.width = this.width * window.devicePixelRatio;
+                this.canvas.height = this.height * window.devicePixelRatio;
+                this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+            }
+
+            resetGame() {
+                this.score = 0;
+                this.distance = 0;
+                this.difficulty = 0;
+                this.gameSpeed = CONFIG.physics.baseSpeed;
+                this.particles = [];
+                this.player.reset(this.width, this.height);
+                this.obstacles.reset(this.width);
+                this.lastTime = performance.now();
+            }
+
+            die() {
+                // Instant restart for AD mode
+                this.flash.style.opacity = 0.5;
+                setTimeout(() => this.flash.style.opacity = 0, 50);
+                this.resetGame();
+            }
+
+            // --- AI BRAIN ---
+            autoPilot() {
+                // Find the closest upcoming obstacle
+                // We add a small buffer (obstacle width) to ensure we don't look at passed obstacles
+                const upcoming = this.obstacles.obstacles.find(o => o.x + o.w > this.player.x);
+                
+                let targetY = this.height / 2; // Default to middle if no obstacle
+
+                if (upcoming) {
+                    targetY = upcoming.centerY;
+
+                    // SMART AVOIDANCE:
+                    // If it's a MINE, we can't go through the center.
+                    if (upcoming.type === 'MINE') {
+                        // Decide whether to go Above or Below based on where we are now
+                        const safeMargin = 100;
+                        if (this.player.y < upcoming.centerY) {
+                            targetY = upcoming.centerY - safeMargin; // Go Over
+                        } else {
+                            targetY = upcoming.centerY + safeMargin; // Go Under
+                        }
+                    }
+                }
+
+                // AI CONTROL LOGIC
+                // "Deadzone" prevents the AI from flipping wildly when close to target
+                const deadzone = 30; 
+                
+                // If we are below the target (y is high) and need to go up:
+                if (this.player.y > targetY + deadzone) {
+                    // If gravity is pulling us down (1), flip it to up (-1)
+                    if (this.player.gravityDir === 1) {
+                        this.player.flip();
+                    }
+                }
+                // If we are above the target (y is low) and need to go down:
+                else if (this.player.y < targetY - deadzone) {
+                    // If gravity is pulling us up (-1), flip it to down (1)
+                    if (this.player.gravityDir === -1) {
+                        this.player.flip();
+                    }
+                }
+            }
+
+            update(dt) {
+                // RUN AI
+                this.autoPilot();
+
+                // Increase difficulty
+                this.difficulty += dt * CONFIG.gameplay.difficultyRamp;
+                let speedMultiplier = 1 + Math.log10(1 + this.difficulty * 0.5);
+                this.gameSpeed = CONFIG.physics.baseSpeed * speedMultiplier;
+
+                // Move World
+                this.distance += (this.gameSpeed * dt) / 50; 
+                const wallHit = this.player.update(dt, this.height);
+                this.obstacles.update(dt, this.gameSpeed, this.width, this.height, this.difficulty);
+
+                // Collision
+                if (wallHit || this.obstacles.checkCollision(this.player)) {
+                    this.die();
+                }
+
+                this.scoreDisplay.innerText = Math.floor(this.distance) + 'm';
+                
+                // Particles
+                // Trail particles
+                if(Math.random() > 0.5) {
+                    this.particles.push(new Particle(this.player.x, this.player.y, CONFIG.colors.player, 10));
+                }
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    let p = this.particles[i];
+                    p.update();
+                    if (p.life <= 0) this.particles.splice(i, 1);
+                }
+            }
+
+            draw() {
+                this.ctx.fillStyle = CONFIG.colors.bg;
+                this.ctx.fillRect(0, 0, this.width, this.height);
+                
+                // Grid
+                this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
+                this.ctx.lineWidth = 1;
+                const spacing = 100;
+                const offset = -(this.distance * 50) % spacing;
+                for (let x = offset; x < this.width; x += spacing) {
+                    if (x < 0) continue;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x, 0);
+                    this.ctx.lineTo(x, this.height);
+                    this.ctx.stroke();
+                }
+                this.ctx.beginPath();
+                this.ctx.moveTo(0, this.height * 0.2);
+                this.ctx.lineTo(this.width, this.height * 0.2);
+                this.ctx.moveTo(0, this.height * 0.8);
+                this.ctx.lineTo(this.width, this.height * 0.8);
+                this.ctx.stroke();
