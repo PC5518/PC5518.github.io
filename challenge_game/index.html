@@ -72,6 +72,27 @@
             z-index: 20;
         }
 
+        /* NEW: Top Left Label */
+        .top-left-info {
+            position: absolute;
+            top: 30px;
+            left: 30px;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        .top-left-info h3 {
+            color: var(--accent-color);
+            margin: 0;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px var(--accent-glow);
+            font-weight: 700;
+            border-left: 3px solid var(--accent-color);
+            padding-left: 10px;
+        }
+
         .score-container {
             position: absolute;
             top: 40px;
@@ -187,6 +208,12 @@
     <div id="flash"></div>
 
     <div id="ui-layer">
+        
+        <!-- NEW: Top Left Information -->
+        <div class="top-left-info">
+            <h3>Who will travel the<br>highest distance!</h3>
+        </div>
+
         <div class="score-container" id="score-container">
             <h2 id="score-display">0</h2>
             <div id="score-label">Distance</div>
@@ -209,7 +236,7 @@
     <script>
         /**
          * PHASE SHIFT
-         * A high-fidelity procedural runner.
+         * Updated with Random Obstacle Types and UI
          */
 
         // --- CONFIGURATION ---
@@ -220,20 +247,21 @@
                 playerGlow: 'rgba(0, 243, 255, ',
                 obstacle: '#ffffff',
                 obstacleGlow: 'rgba(255, 255, 255, ',
-                danger: '#ff0055'
+                mine: '#ffaa00', // Color for the new Diamond/Mine shape
+                piston: '#ff0055' // Color for the single block
             },
             physics: {
-                gravity: 2800, // Pixels per second squared
+                gravity: 2800, 
                 terminalVelocity: 900,
-                baseSpeed: 500, // Horizontal pixels per second
-                jumpImpulse: 0 // No jump, just gravity flip
+                baseSpeed: 500, 
+                jumpImpulse: 0 
             },
             gameplay: {
                 initialGap: 280,
                 minGap: 140,
                 obstacleWidth: 60,
-                spawnDistance: 400, // Distance between pipes
-                difficultyRamp: 0.05 // How fast it gets hard
+                spawnDistance: 400, 
+                difficultyRamp: 0.05 
             }
         };
 
@@ -245,13 +273,12 @@
             easeOut: (t) => (--t) * t * t + 1
         };
 
-        // --- AUDIO ENGINE (Procedural Sound) ---
+        // --- AUDIO ENGINE ---
         class AudioEngine {
             constructor() {
                 this.ctx = null;
                 this.masterGain = null;
                 this.initialized = false;
-                this.droneOsc = null;
             }
 
             init() {
@@ -261,68 +288,21 @@
                 this.masterGain = this.ctx.createGain();
                 this.masterGain.gain.value = 0.4;
                 this.masterGain.connect(this.ctx.destination);
-
-                // Create a compressor to glue sounds together
-                const compressor = this.ctx.createDynamicsCompressor();
-                compressor.threshold.value = -24;
-                compressor.knee.value = 30;
-                compressor.ratio.value = 12;
-                compressor.attack.value = 0.003;
-                compressor.release.value = 0.25;
-                this.masterGain.connect(compressor);
-                compressor.connect(this.ctx.destination);
-
-                this.startAmbientDrone();
                 this.initialized = true;
-            }
-
-            startAmbientDrone() {
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                const filter = this.ctx.createBiquadFilter();
-
-                osc.type = 'sawtooth';
-                osc.frequency.value = 50; 
-                
-                filter.type = 'lowpass';
-                filter.frequency.value = 200;
-                filter.Q.value = 1;
-
-                gain.gain.value = 0.1;
-
-                osc.connect(filter);
-                filter.connect(gain);
-                gain.connect(this.masterGain);
-                
-                osc.start();
-                this.droneOsc = { osc, filter, gain };
-
-                // Modulate the filter for "life"
-                setInterval(() => {
-                    if(this.ctx.state === 'running') {
-                        const time = this.ctx.currentTime;
-                        filter.frequency.setValueAtTime(200 + Math.sin(time * 0.5) * 50, time);
-                    }
-                }, 100);
             }
 
             playFlip() {
                 if (!this.initialized) return;
                 const t = this.ctx.currentTime;
-                
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-                
                 osc.type = 'sine';
                 osc.frequency.setValueAtTime(400, t);
                 osc.frequency.exponentialRampToValueAtTime(800, t + 0.1);
-                
                 gain.gain.setValueAtTime(0.3, t);
                 gain.gain.exponentialRampToValueAtTime(0.01, t + 0.1);
-                
                 osc.connect(gain);
                 gain.connect(this.masterGain);
-                
                 osc.start(t);
                 osc.stop(t + 0.15);
             }
@@ -332,19 +312,14 @@
                 const t = this.ctx.currentTime;
                 const osc = this.ctx.createOscillator();
                 const gain = this.ctx.createGain();
-
                 const basePitch = 880 + (multiplier * 50); 
-                
                 osc.type = 'triangle';
                 osc.frequency.setValueAtTime(basePitch, t);
                 osc.frequency.exponentialRampToValueAtTime(basePitch * 2, t + 0.05);
-                
                 gain.gain.setValueAtTime(0.1, t);
                 gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
-                
                 osc.connect(gain);
                 gain.connect(this.masterGain);
-                
                 osc.start(t);
                 osc.stop(t + 0.1);
             }
@@ -352,43 +327,14 @@
             playCrash() {
                 if (!this.initialized) return;
                 const t = this.ctx.currentTime;
-                
-                // Noise burst
-                const bufferSize = this.ctx.sampleRate * 0.5;
-                const buffer = this.ctx.createBuffer(1, bufferSize, this.ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = Math.random() * 2 - 1;
-                }
-                
-                const noise = this.ctx.createBufferSource();
-                noise.buffer = buffer;
-                
-                const filter = this.ctx.createBiquadFilter();
-                filter.type = 'lowpass';
-                filter.frequency.setValueAtTime(1000, t);
-                filter.frequency.exponentialRampToValueAtTime(100, t + 0.4);
-
-                const gain = this.ctx.createGain();
-                gain.gain.setValueAtTime(0.8, t);
-                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-                
-                noise.connect(filter);
-                filter.connect(gain);
-                gain.connect(this.masterGain);
-                
-                noise.start(t);
-
-                // Sub bass impact
                 const osc = this.ctx.createOscillator();
-                const subGain = this.ctx.createGain();
+                const gain = this.ctx.createGain();
                 osc.frequency.setValueAtTime(100, t);
                 osc.frequency.exponentialRampToValueAtTime(10, t + 0.5);
-                subGain.gain.setValueAtTime(0.8, t);
-                subGain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
-                
-                osc.connect(subGain);
-                subGain.connect(this.masterGain);
+                gain.gain.setValueAtTime(0.8, t);
+                gain.gain.exponentialRampToValueAtTime(0.01, t + 0.5);
+                osc.connect(gain);
+                gain.connect(this.masterGain);
                 osc.start(t);
                 osc.stop(t + 0.6);
             }
@@ -413,7 +359,7 @@
                 this.x += this.vx;
                 this.y += this.vy;
                 this.life -= this.decay;
-                this.vx *= 0.95; // Friction
+                this.vx *= 0.95; 
                 this.vy *= 0.95;
             }
 
@@ -427,15 +373,14 @@
             }
         }
 
-        // --- ENTITIES ---
-        
+        // --- PLAYER ---
         class Player {
             constructor() {
                 this.radius = 12;
-                this.x = 0; // Will be set in reset
+                this.x = 0; 
                 this.y = 0;
                 this.vy = 0;
-                this.gravityDir = 1; // 1 = down, -1 = up
+                this.gravityDir = 1; 
                 this.trail = [];
                 this.maxTrail = 20;
             }
@@ -454,20 +399,11 @@
             }
 
             update(dt, height) {
-                // Physics
                 const gravity = CONFIG.physics.gravity * this.gravityDir;
                 this.vy += gravity * dt;
-                
-                // Clamp velocity
-                this.vy = MathUtils.clamp(
-                    this.vy, 
-                    -CONFIG.physics.terminalVelocity, 
-                    CONFIG.physics.terminalVelocity
-                );
-
+                this.vy = MathUtils.clamp(this.vy, -CONFIG.physics.terminalVelocity, CONFIG.physics.terminalVelocity);
                 this.y += this.vy * dt;
 
-                // Bounds collision
                 let collided = false;
                 if (this.y < this.radius) {
                     this.y = this.radius;
@@ -480,17 +416,13 @@
                     collided = true;
                 }
 
-                // Trail Logic
                 this.trail.unshift({x: this.x, y: this.y});
-                if (this.trail.length > this.maxTrail) {
-                    this.trail.pop();
-                }
+                if (this.trail.length > this.maxTrail) this.trail.pop();
 
                 return collided;
             }
 
             draw(ctx) {
-                // Draw Trail
                 if (this.trail.length > 1) {
                     ctx.beginPath();
                     ctx.moveTo(this.trail[0].x, this.trail[0].y);
@@ -498,25 +430,19 @@
                         const p = this.trail[i];
                         ctx.lineTo(p.x, p.y);
                     }
-                    
                     const grad = ctx.createLinearGradient(
                         this.trail[0].x, this.trail[0].y, 
                         this.trail[this.trail.length-1].x, this.trail[this.trail.length-1].y
                     );
                     grad.addColorStop(0, CONFIG.colors.player);
                     grad.addColorStop(1, 'rgba(0, 243, 255, 0)');
-                    
                     ctx.strokeStyle = grad;
                     ctx.lineWidth = 4;
                     ctx.lineCap = 'round';
                     ctx.lineJoin = 'round';
-                    ctx.shadowBlur = 10;
-                    ctx.shadowColor = CONFIG.colors.player;
                     ctx.stroke();
-                    ctx.shadowBlur = 0;
                 }
 
-                // Draw Player
                 ctx.shadowBlur = 20;
                 ctx.shadowColor = CONFIG.colors.player;
                 ctx.fillStyle = '#ffffff';
@@ -524,7 +450,6 @@
                 ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
                 ctx.fill();
 
-                // Inner Glow
                 ctx.shadowBlur = 0;
                 ctx.fillStyle = CONFIG.colors.player;
                 ctx.beginPath();
@@ -533,6 +458,7 @@
             }
         }
 
+        // --- OBSTACLE MANAGER ---
         class ObstacleManager {
             constructor() {
                 this.obstacles = [];
@@ -547,23 +473,18 @@
             }
 
             update(dt, speed, width, height, difficulty) {
-                // Move obstacles
                 for (let i = this.obstacles.length - 1; i >= 0; i--) {
                     let obs = this.obstacles[i];
                     obs.x -= speed * dt;
-
-                    // Remove if offscreen
                     if (obs.x + obs.w < 0) {
                         this.obstacles.splice(i, 1);
                     }
                 }
 
-                // Spawn logic
                 this.spawnX -= speed * dt;
                 
                 if (this.spawnX <= width) {
                     this.spawnObstacle(width, height, difficulty);
-                    
                     const dist = Math.max(
                         CONFIG.gameplay.spawnDistance * 0.6,
                         CONFIG.gameplay.spawnDistance - (difficulty * 50)
@@ -573,65 +494,133 @@
             }
 
             spawnObstacle(width, height, difficulty) {
-                // Calculate Gap Size
+                // Calculate Gap
                 let gap = MathUtils.lerp(
                     CONFIG.gameplay.initialGap, 
                     CONFIG.gameplay.minGap, 
                     Math.min(difficulty * 0.1, 1)
                 );
-
                 gap += MathUtils.randRange(-20, 20);
 
-                // Calculate Gap Position
+                // Safe Zone
                 const minY = 50 + gap/2;
                 const maxY = height - 50 - gap/2;
-                
                 const centerY = MathUtils.randRange(minY, maxY);
-
                 const w = CONFIG.gameplay.obstacleWidth;
 
+                // Determine Type Randomly
+                const rand = Math.random();
+                let type = 'WALL'; // Default
+                if (rand > 0.7) type = 'MINE'; // 30% chance
+                else if (rand > 0.4) type = 'PISTON'; // 30% chance
+
                 this.obstacles.push({
+                    type: type,
                     x: width,
                     w: w,
-                    topH: centerY - gap/2,
-                    bottomY: centerY + gap/2,
+                    topH: centerY - gap/2, // For Wall/Piston
+                    bottomY: centerY + gap/2, // For Wall/Piston
+                    centerY: centerY, // For Mine
                     passed: false
                 });
             }
 
             draw(ctx, height) {
-                ctx.fillStyle = CONFIG.colors.obstacle;
-                ctx.shadowBlur = 10;
-                ctx.shadowColor = CONFIG.colors.obstacleGlow + '0.5)';
-
                 this.obstacles.forEach(obs => {
-                    // Top Pillar
-                    ctx.fillRect(obs.x, 0, obs.w, obs.topH);
-                    
-                    // Bottom Pillar
-                    ctx.fillRect(obs.x, obs.bottomY, obs.w, height - obs.bottomY);
-                    
-                    // Add subtle detail
-                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
-                    ctx.fillRect(obs.x, obs.topH - 5, obs.w, 5);
-                    ctx.fillRect(obs.x, obs.bottomY, obs.w, 5);
-                    ctx.fillStyle = CONFIG.colors.obstacle;
+                    if (obs.type === 'WALL') {
+                        // Standard Top/Bottom Bars
+                        ctx.fillStyle = CONFIG.colors.obstacle;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = CONFIG.colors.obstacleGlow + '0.5)';
+                        
+                        // Top
+                        ctx.fillRect(obs.x, 0, obs.w, obs.topH);
+                        // Bottom
+                        ctx.fillRect(obs.x, obs.bottomY, obs.w, height - obs.bottomY);
+                        
+                        // Detail lines
+                        ctx.fillStyle = 'rgba(255,255,255,0.8)';
+                        ctx.fillRect(obs.x, obs.topH - 5, obs.w, 5);
+                        ctx.fillRect(obs.x, obs.bottomY, obs.w, 5);
+
+                    } else if (obs.type === 'MINE') {
+                        // Floating Diamond Shape
+                        ctx.fillStyle = CONFIG.colors.mine;
+                        ctx.shadowBlur = 15;
+                        ctx.shadowColor = CONFIG.colors.mine;
+                        
+                        const size = 50; // Size of the mine
+                        const cy = obs.centerY;
+                        const cx = obs.x + obs.w/2;
+                        
+                        ctx.beginPath();
+                        ctx.moveTo(cx, cy - size/2); // Top
+                        ctx.lineTo(cx + size/2, cy); // Right
+                        ctx.moveTo(cx, cy + size/2); // Bottom
+                        ctx.lineTo(cx - size/2, cy); // Left
+                        ctx.lineTo(cx, cy - size/2);
+                        ctx.fill();
+                        
+                        // Core
+                        ctx.fillStyle = '#fff';
+                        ctx.beginPath();
+                        ctx.arc(cx, cy, 10, 0, Math.PI*2);
+                        ctx.fill();
+
+                    } else if (obs.type === 'PISTON') {
+                        // Single Block connected to either top or bottom
+                        ctx.fillStyle = CONFIG.colors.piston;
+                        ctx.shadowBlur = 10;
+                        ctx.shadowColor = CONFIG.colors.piston;
+
+                        // Randomly decided earlier implicitly by gap position, 
+                        // but let's enforce a solid look.
+                        // If center is high, draw from top. If low, draw from bottom.
+                        if (obs.centerY < height / 2) {
+                            // Ceiling Piston
+                            ctx.fillRect(obs.x, 0, obs.w, obs.centerY + 40);
+                            ctx.fillStyle = '#fff';
+                            ctx.fillRect(obs.x, obs.centerY + 30, obs.w, 10);
+                        } else {
+                            // Floor Piston
+                            ctx.fillRect(obs.x, obs.centerY - 40, obs.w, height);
+                            ctx.fillStyle = '#fff';
+                            ctx.fillRect(obs.x, obs.centerY - 40, obs.w, 10);
+                        }
+                    }
+                    ctx.shadowBlur = 0;
                 });
-                
-                ctx.shadowBlur = 0;
             }
 
             checkCollision(player) {
+                const pR = player.radius * 0.8; // Hitbox reduction
+                
                 for (let obs of this.obstacles) {
-                    // AABB Collision
-                    const pR = player.radius * 0.8;
-                    
-                    // Check X overlap
                     if (player.x + pR > obs.x && player.x - pR < obs.x + obs.w) {
-                        // Check Y overlap (Top pipe)
-                        if (player.y - pR < obs.topH) return true;
-                        // Check Y overlap (Bottom pipe)
-                        if (player.y + pR > obs.bottomY) return true;
+                        
+                        if (obs.type === 'WALL') {
+                            if (player.y - pR < obs.topH) return true;
+                            if (player.y + pR > obs.bottomY) return true;
+                        
+                        } else if (obs.type === 'MINE') {
+                            // Simple box collision for the mine for performance
+                            // Check if player is INSIDE the mine area
+                            const size = 40; // Hitbox size
+                            if (player.y + pR > obs.centerY - size/2 && 
+                                player.y - pR < obs.centerY + size/2) {
+                                return true;
+                            }
+
+                        } else if (obs.type === 'PISTON') {
+                            const height = window.innerHeight; // Approx check
+                            if (obs.centerY < height / 2) {
+                                // Checking Ceiling Piston collision
+                                if (player.y - pR < obs.centerY + 40) return true;
+                            } else {
+                                // Checking Floor Piston collision
+                                if (player.y + pR > obs.centerY - 40) return true;
+                            }
+                        }
                     }
                 }
                 return false;
@@ -663,7 +652,7 @@
                 this.obstacles = new ObstacleManager();
                 this.particles = [];
 
-                this.state = 'MENU'; // MENU, PLAYING, GAMEOVER
+                this.state = 'MENU';
                 this.score = 0;
                 this.distance = 0;
                 this.difficulty = 0;
@@ -672,7 +661,6 @@
                 this.lastTime = 0;
                 this.shakeTime = 0;
 
-                // Elements
                 this.scoreDisplay = document.getElementById('score-display');
                 this.startScreen = document.getElementById('start-screen');
                 this.gameOverScreen = document.getElementById('gameover-screen');
@@ -682,7 +670,6 @@
                 window.addEventListener('resize', () => this.resize());
                 this.setupInputs();
 
-                // Start Loop
                 requestAnimationFrame(t => this.loop(t));
             }
 
@@ -737,8 +724,6 @@
                 this.player.reset(this.width, this.height);
                 this.obstacles.reset(this.width);
                 this.scoreDisplay.innerText = "0";
-                
-                // UI Reset
                 this.startScreen.classList.add('hidden');
                 this.gameOverScreen.classList.add('hidden');
             }
@@ -754,22 +739,12 @@
                 this.state = 'GAMEOVER';
                 this.deathTime = Date.now();
                 this.audio.playCrash();
-                
-                // Screen Shake
-                this.shakeTime = 0.5; // seconds
-                
-                // Flash
+                this.shakeTime = 0.5;
                 this.flash.style.opacity = 0.8;
                 setTimeout(() => this.flash.style.opacity = 0, 50);
 
-                // Particles
                 for(let i=0; i<30; i++) {
-                    this.particles.push(new Particle(
-                        this.player.x, 
-                        this.player.y, 
-                        CONFIG.colors.player, 
-                        30
-                    ));
+                    this.particles.push(new Particle(this.player.x, this.player.y, CONFIG.colors.player, 30));
                 }
 
                 document.getElementById('final-score-text').innerText = `Distance: ${Math.floor(this.distance)}m`;
@@ -778,50 +753,33 @@
 
             update(dt) {
                 if (this.state !== 'PLAYING') {
-                    // Just update particles if in gameover
-                    if (this.state === 'GAMEOVER') {
-                        this.updateParticles();
-                    }
+                    if (this.state === 'GAMEOVER') this.updateParticles();
                     return;
                 }
 
-                const timeInSec = this.distance / (CONFIG.physics.baseSpeed / 60); // approx
-                
                 this.difficulty += dt * CONFIG.gameplay.difficultyRamp;
-                
-                // Speed Log curve: Caps at ~1.8x speed
                 let speedMultiplier = 1 + Math.log10(1 + this.difficulty * 0.5);
                 this.gameSpeed = CONFIG.physics.baseSpeed * speedMultiplier;
 
-                // 2. Physics
-                this.distance += (this.gameSpeed * dt) / 50; // Distance in "meters"
+                this.distance += (this.gameSpeed * dt) / 50; 
                 const wallHit = this.player.update(dt, this.height);
 
-                // 3. Obstacles
                 this.obstacles.update(dt, this.gameSpeed, this.width, this.height, this.difficulty);
 
-                // 4. Collision
                 if (wallHit || this.obstacles.checkCollision(this.player)) {
                     this.die();
                 }
 
-                // 5. Score
                 const points = this.obstacles.checkScore(this.player);
                 if (points > 0) {
                     this.score += points;
                     this.audio.playScore(speedMultiplier);
-                    
-                    // UI Bump
                     this.scoreDisplay.style.transform = "scale(1.2)";
                     setTimeout(() => this.scoreDisplay.style.transform = "scale(1)", 100);
                 }
 
                 this.scoreDisplay.innerText = Math.floor(this.distance);
-                
-                // 6. Particles
                 this.updateParticles();
-
-                // 7. Screen Shake decay
                 if (this.shakeTime > 0) this.shakeTime -= dt;
             }
 
@@ -834,42 +792,26 @@
             }
 
             draw() {
-                // Clear Background
                 this.ctx.fillStyle = CONFIG.colors.bg;
                 this.ctx.fillRect(0, 0, this.width, this.height);
-
-                // Grid/Floor illusion for depth
                 this.drawBackgroundGrid();
 
-                // Apply Shake
                 this.ctx.save();
                 if (this.shakeTime > 0) {
                     const mag = this.shakeTime * 20;
-                    const dx = (Math.random() - 0.5) * mag;
-                    const dy = (Math.random() - 0.5) * mag;
-                    this.ctx.translate(dx, dy);
+                    this.ctx.translate((Math.random() - 0.5) * mag, (Math.random() - 0.5) * mag);
                 }
 
-                // Draw Entities
                 this.obstacles.draw(this.ctx, this.height);
-                
-                if (this.state === 'PLAYING') {
-                    this.player.draw(this.ctx);
-                }
-
-                // Draw Particles
+                if (this.state === 'PLAYING') this.player.draw(this.ctx);
                 this.particles.forEach(p => p.draw(this.ctx));
-
                 this.ctx.restore();
             }
 
             drawBackgroundGrid() {
                 this.ctx.strokeStyle = 'rgba(255, 255, 255, 0.03)';
                 this.ctx.lineWidth = 1;
-                
-                // Moving vertical lines
                 const spacing = 100;
-                // Offset based on distance to create movement sensation
                 const offset = -(this.distance * 50) % spacing;
                 
                 for (let x = offset; x < this.width; x += spacing) {
@@ -880,7 +822,6 @@
                     this.ctx.stroke();
                 }
 
-                // Horizontal horizon lines
                 this.ctx.beginPath();
                 this.ctx.moveTo(0, this.height * 0.2);
                 this.ctx.lineTo(this.width, this.height * 0.2);
@@ -890,20 +831,15 @@
             }
 
             loop(time) {
-                const dt = Math.min((time - this.lastTime) / 1000, 0.05); // Cap dt
+                const dt = Math.min((time - this.lastTime) / 1000, 0.05);
                 this.lastTime = time;
-
                 this.update(dt);
                 this.draw();
-
                 requestAnimationFrame(t => this.loop(t));
             }
         }
 
-        // Initialize
-        window.onload = () => {
-            const game = new Game();
-        };
+        window.onload = () => { const game = new Game(); };
 
     </script>
 </body>
