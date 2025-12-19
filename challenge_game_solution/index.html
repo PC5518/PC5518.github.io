@@ -107,7 +107,7 @@
         #score-display {
             font-size: 5rem;
             font-weight: 900;
-            color: rgba(255, 255, 255, 0.1); /* Subtle score for ad background */
+            color: rgba(255, 255, 255, 0.1); 
             margin: 0;
             line-height: 1;
         }
@@ -168,7 +168,7 @@
     <script>
         /**
          * VELOXIS: ADVERTISEMENT MODE
-         * Automated Gameplay Logic
+         * Fixed & Robust Version
          */
 
         const CONFIG = {
@@ -186,7 +186,7 @@
             },
             gameplay: {
                 initialGap: 280,
-                minGap: 160, // Slightly easier for AI to look smooth
+                minGap: 160,
                 obstacleWidth: 60,
                 spawnDistance: 450,
                 difficultyRamp: 0.05
@@ -264,6 +264,7 @@
                 this.y += this.vy * dt;
 
                 let collided = false;
+                // Floor/Ceiling collision
                 if (this.y < this.radius) {
                     this.y = this.radius;
                     this.vy = 0;
@@ -316,22 +317,24 @@
         // --- OBSTACLES ---
         class ObstacleManager {
             constructor() {
-                this.obstacles = [];
+                this.list = []; // Renamed from 'obstacles' to 'list' to be safe
                 this.spawnX = 0;
             }
 
             reset(width) {
-                this.obstacles = [];
+                this.list = [];
                 this.spawnX = width + 100;
             }
 
             update(dt, speed, width, height, difficulty) {
-                for (let i = this.obstacles.length - 1; i >= 0; i--) {
-                    let obs = this.obstacles[i];
+                // Remove passed
+                for (let i = this.list.length - 1; i >= 0; i--) {
+                    let obs = this.list[i];
                     obs.x -= speed * dt;
-                    if (obs.x + obs.w < 0) this.obstacles.splice(i, 1);
+                    if (obs.x + obs.w < 0) this.list.splice(i, 1);
                 }
 
+                // Spawn new
                 this.spawnX -= speed * dt;
                 if (this.spawnX <= width) {
                     this.spawnObstacle(width, height, difficulty);
@@ -357,7 +360,7 @@
                 if (rand > 0.7) type = 'MINE'; 
                 else if (rand > 0.4) type = 'PISTON'; 
 
-                this.obstacles.push({
+                this.list.push({
                     type: type,
                     x: width,
                     w: w,
@@ -370,7 +373,7 @@
             }
 
             draw(ctx, height) {
-                this.obstacles.forEach(obs => {
+                this.list.forEach(obs => {
                     if (obs.type === 'WALL') {
                         ctx.fillStyle = CONFIG.colors.obstacle;
                         ctx.shadowBlur = 10;
@@ -406,7 +409,7 @@
 
             checkCollision(player) {
                 const pR = player.radius * 0.8;
-                for (let obs of this.obstacles) {
+                for (let obs of this.list) {
                     if (player.x + pR > obs.x && player.x - pR < obs.x + obs.w) {
                         if (obs.type === 'WALL') {
                             if (player.y - pR < obs.topH) return true;
@@ -437,7 +440,8 @@
                 this.height = window.innerHeight;
 
                 this.player = new Player();
-                this.obstacles = new ObstacleManager();
+                // Renamed to obsMgr to avoid property naming confusion
+                this.obsMgr = new ObstacleManager();
                 this.particles = [];
 
                 this.score = 0;
@@ -449,11 +453,17 @@
                 this.scoreDisplay = document.getElementById('score-display');
                 this.flash = document.getElementById('flash');
 
+                // Initial setup
                 this.resize();
                 window.addEventListener('resize', () => this.resize());
                 
-                // Start immediately
+                // Start Loop safely
                 this.resetGame();
+                
+                // Force an initial draw in case the loop delays
+                this.draw(); 
+                
+                // Begin Loop
                 requestAnimationFrame(t => this.loop(t));
             }
 
@@ -463,6 +473,9 @@
                 this.canvas.width = this.width * window.devicePixelRatio;
                 this.canvas.height = this.height * window.devicePixelRatio;
                 this.ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+                
+                // If resize happens during pause/load, ensure we don't have blank screen
+                this.draw();
             }
 
             resetGame() {
@@ -471,13 +484,14 @@
                 this.difficulty = 0;
                 this.gameSpeed = CONFIG.physics.baseSpeed;
                 this.particles = [];
-                this.player.reset(this.width, this.height);
-                this.obstacles.reset(this.width);
+                
+                if(this.player) this.player.reset(this.width, this.height);
+                if(this.obsMgr) this.obsMgr.reset(this.width);
+                
                 this.lastTime = performance.now();
             }
 
             die() {
-                // Instant restart for AD mode
                 this.flash.style.opacity = 0.5;
                 setTimeout(() => this.flash.style.opacity = 0, 50);
                 this.resetGame();
@@ -485,19 +499,15 @@
 
             // --- AI BRAIN ---
             autoPilot() {
-                // Find the closest upcoming obstacle
-                // We add a small buffer (obstacle width) to ensure we don't look at passed obstacles
-                const upcoming = this.obstacles.obstacles.find(o => o.x + o.w > this.player.x);
+                // Look into the 'list' array in obsMgr
+                const upcoming = this.obsMgr.list.find(o => o.x + o.w > this.player.x);
                 
-                let targetY = this.height / 2; // Default to middle if no obstacle
+                let targetY = this.height / 2; 
 
                 if (upcoming) {
                     targetY = upcoming.centerY;
 
-                    // SMART AVOIDANCE:
-                    // If it's a MINE, we can't go through the center.
                     if (upcoming.type === 'MINE') {
-                        // Decide whether to go Above or Below based on where we are now
                         const safeMargin = 100;
                         if (this.player.y < upcoming.centerY) {
                             targetY = upcoming.centerY - safeMargin; // Go Over
@@ -507,49 +517,42 @@
                     }
                 }
 
-                // AI CONTROL LOGIC
-                // "Deadzone" prevents the AI from flipping wildly when close to target
+                // Smooth Control
                 const deadzone = 30; 
                 
-                // If we are below the target (y is high) and need to go up:
                 if (this.player.y > targetY + deadzone) {
-                    // If gravity is pulling us down (1), flip it to up (-1)
-                    if (this.player.gravityDir === 1) {
-                        this.player.flip();
-                    }
+                    if (this.player.gravityDir === 1) this.player.flip();
                 }
-                // If we are above the target (y is low) and need to go down:
                 else if (this.player.y < targetY - deadzone) {
-                    // If gravity is pulling us up (-1), flip it to down (1)
-                    if (this.player.gravityDir === -1) {
-                        this.player.flip();
-                    }
+                    if (this.player.gravityDir === -1) this.player.flip();
                 }
             }
 
             update(dt) {
-                // RUN AI
+                // Safety check for NaN
+                if (isNaN(dt) || dt > 0.1) dt = 0.016;
+
                 this.autoPilot();
 
-                // Increase difficulty
                 this.difficulty += dt * CONFIG.gameplay.difficultyRamp;
                 let speedMultiplier = 1 + Math.log10(1 + this.difficulty * 0.5);
                 this.gameSpeed = CONFIG.physics.baseSpeed * speedMultiplier;
 
-                // Move World
                 this.distance += (this.gameSpeed * dt) / 50; 
+                
+                // Update entities
                 const wallHit = this.player.update(dt, this.height);
-                this.obstacles.update(dt, this.gameSpeed, this.width, this.height, this.difficulty);
+                this.obsMgr.update(dt, this.gameSpeed, this.width, this.height, this.difficulty);
 
-                // Collision
-                if (wallHit || this.obstacles.checkCollision(this.player)) {
+                if (wallHit || this.obsMgr.checkCollision(this.player)) {
                     this.die();
                 }
 
-                this.scoreDisplay.innerText = Math.floor(this.distance) + 'm';
+                if(this.scoreDisplay) {
+                    this.scoreDisplay.innerText = Math.floor(this.distance) + 'm';
+                }
                 
                 // Particles
-                // Trail particles
                 if(Math.random() > 0.5) {
                     this.particles.push(new Particle(this.player.x, this.player.y, CONFIG.colors.player, 10));
                 }
@@ -561,6 +564,9 @@
             }
 
             draw() {
+                if(!this.ctx) return;
+
+                // Clear
                 this.ctx.fillStyle = CONFIG.colors.bg;
                 this.ctx.fillRect(0, 0, this.width, this.height);
                 
@@ -569,16 +575,53 @@
                 this.ctx.lineWidth = 1;
                 const spacing = 100;
                 const offset = -(this.distance * 50) % spacing;
+                
+                this.ctx.beginPath();
                 for (let x = offset; x < this.width; x += spacing) {
                     if (x < 0) continue;
-                    this.ctx.beginPath();
                     this.ctx.moveTo(x, 0);
                     this.ctx.lineTo(x, this.height);
-                    this.ctx.stroke();
                 }
+                this.ctx.stroke();
+
                 this.ctx.beginPath();
                 this.ctx.moveTo(0, this.height * 0.2);
                 this.ctx.lineTo(this.width, this.height * 0.2);
                 this.ctx.moveTo(0, this.height * 0.8);
                 this.ctx.lineTo(this.width, this.height * 0.8);
                 this.ctx.stroke();
+
+                // Draw Entities
+                if(this.obsMgr) this.obsMgr.draw(this.ctx, this.height);
+                if(this.player) this.player.draw(this.ctx);
+                
+                this.particles.forEach(p => p.draw(this.ctx));
+            }
+
+            loop(time) {
+                // Calculate dt safely
+                let dt = (time - this.lastTime) / 1000;
+                if (dt < 0) dt = 0.016; // Prevent negative time
+                this.lastTime = time;
+
+                // Cap dt to prevent spiraling if tab was inactive
+                dt = Math.min(dt, 0.05);
+
+                this.update(dt);
+                this.draw();
+                requestAnimationFrame(t => this.loop(t));
+            }
+        }
+
+        // Initialize when window loads
+        window.onload = () => { 
+            try {
+                const game = new Game();
+            } catch(e) {
+                console.error("Game Init Failed:", e);
+            }
+        };
+
+    </script>
+</body>
+</html>
