@@ -3,21 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnsCom Financial Systems Lab | Root</title>
+    <title>AnsCom Labs | MIT Maker Portfolio</title>
     
     <style>
         /* 
-           ANSCOM LABS DESIGN SYSTEM
-           MODE: FORENSIC / RAW
-           AUTHOR: ADITYA NARAYAN SINGH
+           DESIGN SYSTEM: MIT ADMISSIONS STYLE
+           FONT: HELVETICA NEUE / ARIAL
+           PALETTE: WHITE, BLACK, MIT RED (#A31F34), GRAY
         */
 
         :root {
-            --bg-color: #ffffff;
-            --text-color: #111111;
-            --border-color: #000000;
-            --meta-color: #555555;
-            --font-stack: "Courier New", Courier, "Lucida Sans Typewriter", monospace;
+            --mit-red: #A31F34;
+            --mit-gray: #8A8B8C;
+            --text-black: #111;
+            --text-light: #555;
+            --bg-color: #fff;
+            --link-color: #000;
+            --hover-color: #A31F34;
         }
 
         * {
@@ -25,239 +27,364 @@
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: var(--font-stack);
             margin: 0;
             padding: 0;
-            font-size: 14px;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-black);
             line-height: 1.5;
-            -webkit-font-smoothing: none;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* MAIN CONTAINER - The physical "page" feel */
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            border-left: 1px solid var(--border-color);
-            border-right: 1px solid var(--border-color);
-            min-height: 100vh;
-            background: #fff;
+        /* TOP COLOR BAR */
+        .top-bar {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                var(--mit-red) 0%, var(--mit-red) 25%, 
+                var(--mit-gray) 25%, var(--mit-gray) 50%, 
+                #000 50%, #000 75%, 
+                var(--mit-red) 75%, var(--mit-red) 100%);
         }
 
         /* HEADER */
         header {
-            padding: 40px 25px;
-            border-bottom: 2px solid var(--border-color);
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
         }
 
-        h1 {
-            font-size: 26px;
-            text-transform: uppercase;
-            margin: 0 0 10px 0;
+        .logo {
+            font-size: 28px;
+            font-weight: 800;
             letter-spacing: -1px;
-            font-weight: 700;
+            display: flex;
+            align-items: center;
         }
 
-        .subtitle {
-            font-size: 13px;
-            text-transform: uppercase;
-            display: block;
-            margin-bottom: 15px;
-            letter-spacing: 0.5px;
+        .logo span {
+            margin-left: 10px;
+            font-weight: 400;
+            font-size: 20px;
+            color: var(--text-black);
         }
 
-        .meta-tag {
-            display: inline-block;
-            font-size: 11px;
-            border: 1px solid var(--border-color);
-            padding: 2px 6px;
-            margin-right: 10px;
-            text-transform: uppercase;
-            background: #f0f0f0;
-        }
-
-        /* NAVIGATION */
-        nav {
-            border-bottom: 1px solid var(--border-color);
-            padding: 15px 25px;
-            background-color: #fafafa;
-            font-size: 12px;
-        }
-
-        nav a {
-            color: #000;
+        .header-nav a {
             text-decoration: none;
-            margin-right: 25px;
-            text-transform: uppercase;
-            font-weight: bold;
+            color: var(--text-black);
+            font-weight: 600;
+            margin-left: 25px;
+            font-size: 14px;
         }
 
-        nav a:hover {
-            background-color: #000;
-            color: #fff;
-            text-decoration: none;
-        }
-
-        nav span {
-            color: var(--meta-color);
-            margin-right: 15px;
-        }
-
-        /* SECTIONS */
-        section {
-            padding: 40px 25px;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .section-label {
-            font-size: 10px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            border-bottom: 2px solid #000;
-            display: inline-block;
-            margin-bottom: 20px;
-            padding-bottom: 2px;
-        }
-
-        p {
-            max-width: 750px;
-            margin-bottom: 15px;
-            text-align: justify;
-        }
-
-        /* SYSTEM STATUS BOX */
-        .status-box {
-            border: 1px dashed #000;
-            background: #f4f4f4;
-            padding: 15px;
-            font-size: 12px;
-            margin: 20px 0;
-        }
-
-        /* PROJECT LISTING STYLES */
-        .log-entry {
-            margin-bottom: 35px;
-            padding-left: 15px;
-            border-left: 4px solid #333;
-        }
-
-        .log-entry h3 {
-            margin: 0 0 5px 0;
-            font-size: 16px;
-            text-transform: uppercase;
-        }
-
-        .log-meta {
-            font-size: 11px;
-            color: var(--meta-color);
-            font-family: monospace;
-            display: block;
-            margin-bottom: 10px;
-        }
-
-        .log-link {
-            display: inline-block;
-            margin-top: 10px;
-            font-weight: bold;
+        .header-nav a:hover {
+            color: var(--mit-red);
             text-decoration: underline;
-            color: #000;
-            font-size: 12px;
+        }
+
+        /* MAIN LAYOUT */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            display: flex;
+            padding: 0 20px;
+            gap: 60px;
+        }
+
+        /* LEFT COLUMN (PROJECTS) */
+        .main-column {
+            flex: 2;
+        }
+
+        /* RIGHT COLUMN (SIDEBAR) */
+        .sidebar {
+            flex: 1;
+            padding-top: 10px;
+        }
+
+        /* SECTION HEADER */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--text-black);
+            display: flex;
+            justify-content: space-between;
         }
         
-        .log-link:hover {
-            background: #000;
-            color: #fff;
-            text-decoration: none;
+        .section-title span.count {
+            color: var(--mit-gray);
+            font-weight: 400;
         }
 
-        /* FOOTER */
-        footer {
-            padding: 20px 25px;
-            font-size: 11px;
-            text-align: right;
-            text-transform: uppercase;
-            color: var(--meta-color);
-            background: #fafafa;
+        /* PROJECT ITEM (BLOG POST STYLE) */
+        .project-card {
+            display: flex;
+            margin-bottom: 50px;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .project-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--mit-red);
+            border: 2px solid #fff;
+            box-shadow: 0 0 0 1px #ddd;
+        }
+
+        .project-content {
+            flex-grow: 1;
+        }
+
+        .project-header h2 {
+            margin: 0 0 5px 0;
+            font-size: 22px;
+            font-weight: 600;
+            line-height: 1.2;
+        }
+
+        .project-meta {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-bottom: 15px;
+        }
+
+        .project-desc {
+            font-size: 15px;
+            color: #333;
+            margin-bottom: 15px;
+            font-weight: 300;
+        }
+
+        /* THE PIPELINE LINKS (The 5 Links) */
+        .pipeline-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            font-family: "Courier New", monospace; /* Technical font for the steps */
+            font-size: 12px;
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            border-left: 3px solid var(--mit-red);
+        }
+
+        .pipeline-nav a {
+            text-decoration: none;
+            color: #d1445b; /* Pinkish red from screenshot */
+            font-weight: 600;
+            position: relative;
+            padding-right: 12px;
+        }
+
+        .pipeline-nav a::after {
+            content: "→";
+            position: absolute;
+            right: 0;
+            color: #999;
+            font-size: 10px;
+            top: 1px;
+        }
+
+        .pipeline-nav a:last-child::after {
+            content: "";
+        }
+
+        .pipeline-nav a.highlight {
+            color: #e68a00; /* Yellow/Orange for crucial steps */
+        }
+
+        .pipeline-nav a:hover {
+            text-decoration: underline;
+            color: #000;
+        }
+
+        /* SIDEBAR STYLES */
+        .sidebar-box {
+            margin-bottom: 40px;
+        }
+
+        .sidebar-header {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .sidebar-text {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 15px;
+        }
+        
+        .sidebar-img {
+            width: 80px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .deadline-box {
+            background: #fcfcfc;
+            border: 1px solid #eee;
+            padding: 15px;
+            font-size: 13px;
+        }
+
+        .deadline-icon {
+            margin-right: 8px;
+        }
+
+        /* MOBILE RESPONSIVE */
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .sidebar { border-top: 1px solid #eee; padding-top: 30px; }
+            .project-card { flex-direction: column; }
+            .project-icon { width: 50px; height: 50px; font-size: 18px; margin-bottom: 10px;}
         }
 
     </style>
 </head>
 <body>
 
-<div class="container">
-    
+    <!-- COLOR BAR -->
+    <div class="top-bar"></div>
+
     <!-- HEADER -->
     <header>
-        <h1>AnsCom Financial Systems Lab</h1>
-        <span class="subtitle">Forensic Logs of Constraint-Driven Quantitative Systems</span>
-        
-        <div style="margin-top: 15px;">
-            <span class="meta-tag">SYS_ARCHITECT: ADITYA NARAYAN SINGH</span>
-            <span class="meta-tag">MIT MAKER PORTFOLIO</span>
-            <span class="meta-tag">EST. 2024</span>
+        <div class="logo">
+            <svg width="40" height="24" viewBox="0 0 64 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="0" y="0" width="10" height="38" fill="black"/>
+                <rect x="18" y="0" width="10" height="38" fill="black"/>
+                <rect x="36" y="0" width="10" height="38" fill="black"/>
+                <rect x="0" y="0" width="10" height="12" fill="#A31F34"/>
+                <rect x="18" y="0" width="10" height="12" fill="#A31F34"/>
+                <rect x="36" y="0" width="10" height="12" fill="#A31F34"/>
+                <rect x="54" y="0" width="10" height="22" fill="black"/>
+            </svg>
+            <span>AnsCom Labs</span>
         </div>
+        <nav class="header-nav">
+            <a href="#">Philosophy</a>
+            <a href="#">Architecture</a>
+            <a href="#">Contact</a>
+            <a href="#">🔍</a>
+        </nav>
     </header>
 
-    <!-- NAVIGATION -->
-    <nav>
-        <span>[DIR]:</span>
-        <a href="index.html">/ROOT</a>
-        <a href="project-gold.html">/LOG_01_GOLD_ETF</a>
-        <a href="project-zentec.html">/LOG_02_ZENTEC_ML</a>
-    </nav>
+    <!-- CONTAINER -->
+    <div class="container">
 
-    <!-- MISSION STATEMENT -->
-    <section>
-        <span class="section-label">00 // Laboratory Mandate</span>
-        <p>
-            <strong>This is not a portfolio. This is a forensic logbook.</strong>
-        </p>
-        <p>
-            Standard engineering showcases highlight success. This laboratory documents the handling of stochastic market constraints, data latency, and algorithmic failure. The objective is to prove iterative system design under strict computational and financial limits.
-        </p>
-        
-        <div class="status-box">
-            > VISUAL INTERFACE: RAW / MINIMAL<br>
-            > MARKETING LAYERS: DISABLED<br>
-            > FOCUS: ARCHITECTURE, FAILURE MODES, REDESIGN
-        </div>
-    </section>
+        <!-- LEFT CONTENT -->
+        <main class="main-column">
+            
+            <div class="section-title">
+                Latest from the Lab
+                <span class="count">2 Active Projects</span>
+            </div>
 
-    <!-- PROJECT INDEX -->
-    <section>
-        <span class="section-label">01 // Active System Logs</span>
-        
-        <!-- PROJECT 1 -->
-        <div class="log-entry">
-            <h3>Post-Market Fair Value Estimation Engine</h3>
-            <span class="log-meta">TARGET: INDIAN GOLD ETFs (HDFC, NIPPON) | REPO: PUBLIC</span>
-            <p>
-                An algorithmic solution to the pricing disparity between Indian Market Close (15:30 IST) and Global Spot Gold prices. Solves for "Gap Up/Down" risk using real-time forex parity calculations rather than naive regression.
-            </p>
-            <a href="project-gold.html" class="log-link">>> ACCESS LOG FILE 01</a>
-        </div>
+            <!-- PROJECT 1 -->
+            <article class="project-card">
+                <div class="project-icon">Au</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>Post-Market Fair Value Estimation Engine</h2>
+                    </div>
+                    <div class="project-meta">
+                        by Aditya N. Singh • Indian Gold ETFs • Arbitrage
+                    </div>
+                    <div class="project-desc">
+                        A forensic approach to pricing mismatches between Indian market close and global spot gold. The system replaces naive regression with real-time forex parity logic to mitigate gap risk.
+                    </div>
+                    
+                    <!-- THE 5 LINKS / PIPELINE -->
+                    <div class="pipeline-nav">
+                        <a href="project-gold.html#naive">Wrong Model</a>
+                        <a href="project-gold.html#failure" class="highlight">Failure Proof</a>
+                        <a href="project-gold.html#redesign">Redesign</a>
+                        <a href="project-gold.html#live">Live Behavior</a>
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank">Repo</a>
+                        <a href="#" class="highlight">Video</a>
+                    </div>
+                </div>
+            </article>
 
-        <!-- PROJECT 2 -->
-        <div class="log-entry">
-            <h3>ZENTEC Constraint-Bound Prediction System</h3>
-            <span class="log-meta">TARGET: NSE EQUITY DERIVATIVES | REPO: PUBLIC</span>
-            <p>
-                A machine learning pipeline designed to predict stock movement while strictly penalized for overfitting. Focuses on stationarity transformation, noise reduction, and "Walk-Forward" validation instead of standard cross-validation.
-            </p>
-            <a href="project-zentec.html" class="log-link">>> ACCESS LOG FILE 02</a>
-        </div>
-    </section>
+            <hr style="border: 0; border-top: 1px solid #eee; margin: 30px 0;">
 
-    <!-- FOOTER -->
-    <footer>
-        SYSTEM TIME: <script>document.write(new Date().toUTCString());</script><br>
-        ANSCOM_LABS // END OF ROOT DIRECTORY
-    </footer>
+            <!-- PROJECT 2 -->
+            <article class="project-card">
+                <div class="project-icon">Z</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>ZENTEC Constraint-Bound Prediction System</h2>
+                    </div>
+                    <div class="project-meta">
+                        by Aditya N. Singh • NSE Derivatives • Machine Learning
+                    </div>
+                    <div class="project-desc">
+                        A machine learning pipeline designed to fail early. It focuses on non-stationarity and penalizes overfitting, proving that standard LSTM models fail on random-walk financial data.
+                    </div>
 
-</div>
+                    <!-- THE 5 LINKS / PIPELINE -->
+                    <div class="pipeline-nav">
+                        <a href="project-zentec.html#naive">Wrong Model</a>
+                        <a href="project-zentec.html#failure" class="highlight">Failure Proof</a>
+                        <a href="project-zentec.html#redesign">Redesign</a>
+                        <a href="project-zentec.html#live">Live Behavior</a>
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank">Repo</a>
+                        <a href="#" class="highlight">Video</a>
+                    </div>
+                </div>
+            </article>
+
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-box">
+                <div class="sidebar-header">Welcome to AnsCom Labs.</div>
+                <p class="sidebar-text">
+                    Here, you can explore the <strong>engineering forensics</strong> behind my quantitative systems.
+                </p>
+                <p class="sidebar-text">
+                    Unlike standard portfolios, this lab documents the <em>Wrong Models</em> and <em>Failures</em> that occurred before the final architecture was built.
+                </p>
+                <!-- Small graphic placeholder -->
+                <svg width="60" height="60" viewBox="0 0 100 100" fill="none" stroke="#333" stroke-width="2">
+                    <circle cx="50" cy="50" r="40" stroke-dasharray="4 4"/>
+                    <path d="M50 20 V50 L70 70"/>
+                </svg>
+            </div>
+
+            <div class="sidebar-box">
+                <div class="sidebar-header" style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">System Specs</div>
+                <div class="deadline-box" style="margin-top: 15px; border-left: 3px solid var(--mit-red);">
+                    <strong>Owner:</strong> Aditya Narayan Singh<br>
+                    <strong>Role:</strong> Systems Architect<br>
+                    <strong>Context:</strong> MIT Maker Portfolio
+                </div>
+                <div class="deadline-box" style="margin-top: 10px;">
+                    📄 <strong>Philosophy:</strong><br>
+                    "Show the crash, not just the landing."
+                </div>
+            </div>
+        </aside>
+
+    </div>
 
 </body>
 </html>
