@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnsCom Financial Systems Lab | Root</title>
+    
+    <style>
+        /* 
+           ANSCOM LABS DESIGN SYSTEM
+           MODE: FORENSIC / RAW
+           AUTHOR: ADITYA NARAYAN SINGH
+        */
+
+        :root {
+            --bg-color: #ffffff;
+            --text-color: #111111;
+            --border-color: #000000;
+            --meta-color: #555555;
+            --font-stack: "Courier New", Courier, "Lucida Sans Typewriter", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-stack);
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: none;
+        }
+
+        /* MAIN CONTAINER - The physical "page" feel */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border-left: 1px solid var(--border-color);
+            border-right: 1px solid var(--border-color);
+            min-height: 100vh;
+            background: #fff;
+        }
+
+        /* HEADER */
+        header {
+            padding: 40px 25px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        h1 {
+            font-size: 26px;
+            text-transform: uppercase;
+            margin: 0 0 10px 0;
+            letter-spacing: -1px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 13px;
+            text-transform: uppercase;
+            display: block;
+            margin-bottom: 15px;
+            letter-spacing: 0.5px;
+        }
+
+        .meta-tag {
+            display: inline-block;
+            font-size: 11px;
+            border: 1px solid var(--border-color);
+            padding: 2px 6px;
+            margin-right: 10px;
+            text-transform: uppercase;
+            background: #f0f0f0;
+        }
+
+        /* NAVIGATION */
+        nav {
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 25px;
+            background-color: #fafafa;
+            font-size: 12px;
+        }
+
+        nav a {
+            color: #000;
+            text-decoration: none;
+            margin-right: 25px;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            background-color: #000;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        nav span {
+            color: var(--meta-color);
+            margin-right: 15px;
+        }
+
+        /* SECTIONS */
+        section {
+            padding: 40px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .section-label {
+            font-size: 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 2px solid #000;
+            display: inline-block;
+            margin-bottom: 20px;
+            padding-bottom: 2px;
+        }
+
+        p {
+            max-width: 750px;
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+
+        /* SYSTEM STATUS BOX */
+        .status-box {
+            border: 1px dashed #000;
+            background: #f4f4f4;
+            padding: 15px;
+            font-size: 12px;
+            margin: 20px 0;
+        }
+
+        /* PROJECT LISTING STYLES */
+        .log-entry {
+            margin-bottom: 35px;
+            padding-left: 15px;
+            border-left: 4px solid #333;
+        }
+
+        .log-entry h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        .log-meta {
+            font-size: 11px;
+            color: var(--meta-color);
+            font-family: monospace;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .log-link {
+            display: inline-block;
+            margin-top: 10px;
+            font-weight: bold;
+            text-decoration: underline;
+            color: #000;
+            font-size: 12px;
+            text-transform: uppercase;
+        }
+        
+        .log-link:hover {
+            background: #000;
+            color: #fff;
+            text-decoration: none;
+        }
+
+        /* FOOTER */
+        footer {
+            padding: 20px 25px;
+            font-size: 11px;
+            text-align: right;
+            text-transform: uppercase;
+            color: var(--meta-color);
+            background: #fafafa;
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- HEADER -->
+    <header>
+        <h1>AnsCom Financial Systems Lab</h1>
+        <span class="subtitle">Forensic Logs of Constraint-Driven Quantitative Systems</span>
+        
+        <div style="margin-top: 15px;">
+            <span class="meta-tag">SYS_ARCHITECT: ADITYA NARAYAN SINGH</span>
+            <span class="meta-tag">MIT MAKER PORTFOLIO</span>
+            <span class="meta-tag">EST. 2024</span>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <span>[DIR]:</span>
+        <a href="index.html">/ROOT</a>
+        <a href="project-gold.html">/LOG_01_GOLD_ETF</a>
+        <a href="project-zentec.html">/LOG_02_ZENTEC_ML</a>
+    </nav>
+
+    <!-- MISSION STATEMENT -->
+    <section>
+        <span class="section-label">00 // Laboratory Mandate</span>
+        <p>
+            <strong>This is not a portfolio. This is a forensic logbook.</strong>
+        </p>
+        <p>
+            Standard engineering showcases highlight success. This laboratory documents the handling of stochastic market constraints, data latency, and algorithmic failure. The objective is to prove iterative system design under strict computational and financial limits.
+        </p>
+        
+        <div class="status-box">
+            > VISUAL INTERFACE: RAW / MINIMAL<br>
+            > MARKETING LAYERS: DISABLED<br>
+            > FOCUS: ARCHITECTURE, FAILURE MODES, REDESIGN
+        </div>
+    </section>
+
+    <!-- PROJECT INDEX -->
+    <section>
+        <span class="section-label">01 // Active System Logs</span>
+        
+        <!-- PROJECT 1 -->
+        <div class="log-entry">
+            <h3>Post-Market Fair Value Estimation Engine</h3>
+            <span class="log-meta">TARGET: INDIAN GOLD ETFs (HDFC, NIPPON) | REPO: PUBLIC</span>
+            <p>
+                An algorithmic solution to the pricing disparity between Indian Market Close (15:30 IST) and Global Spot Gold prices. Solves for "Gap Up/Down" risk using real-time forex parity calculations rather than naive regression.
+            </p>
+            <a href="project-gold.html" class="log-link">>> ACCESS LOG FILE 01</a>
+        </div>
+
+        <!-- PROJECT 2 -->
+        <div class="log-entry">
+            <h3>ZENTEC Constraint-Bound Prediction System</h3>
+            <span class="log-meta">TARGET: NSE EQUITY DERIVATIVES | REPO: PUBLIC</span>
+            <p>
+                A machine learning pipeline designed to predict stock movement while strictly penalized for overfitting. Focuses on stationarity transformation, noise reduction, and "Walk-Forward" validation instead of standard cross-validation.
+            </p>
+            <a href="project-zentec.html" class="log-link">>> ACCESS LOG FILE 02</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        SYSTEM TIME: <script>document.write(new Date().toUTCString());</script><br>
+        ANSCOM_LABS // END OF ROOT DIRECTORY
+    </footer>
+
+</div>
+
+</body>
+</html>
