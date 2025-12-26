@@ -13,7 +13,7 @@
         */
 
         :root {
-            --mit-red: #A31F34; /* Keeping for accents inside cards */
+            --mit-red: #A31F34; 
             --mit-gray: #8A8B8C;
             --text-black: #111;
             --text-light: #555;
@@ -50,28 +50,51 @@
         header {
             max-width: 1100px;
             margin: 0 auto;
-            padding: 30px 20px;
+            padding: 20px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 1px solid #e0e0e0;
         }
 
-        .logo {
-            font-size: 28px;
-            font-weight: 800;
-            letter-spacing: -1px;
+        /* NEW PROFILE SECTION (TOP LEFT) */
+        .profile-section {
             display: flex;
             align-items: center;
+            text-decoration: none;
+            color: #000;
         }
 
-        /* LOGO SVG REMOVED - JUST TEXT LEFT */
-        .logo span {
-            /* Removed margin-left since icon is gone */
-            margin-left: 0; 
-            font-weight: 400;
-            font-size: 20px;
-            color: var(--text-black);
+        .profile-pic {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: 2px solid #eee;
+            margin-right: 15px;
+        }
+
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-name {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .profile-link-text {
+            font-size: 12px;
+            color: #4285F4; /* Google Blue for link */
+            font-weight: bold;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .profile-link-text:hover {
+            text-decoration: underline;
         }
 
         .header-nav a {
@@ -153,12 +176,12 @@
             flex-grow: 1;
         }
 
-        /* Updated Header to Flex for GitHub Link */
+        /* HEADER FLEX FOR REPO LINK */
         .project-header {
             display: flex;
-            justify-content: space-between; /* Pushes content to edges */
+            justify-content: space-between; 
             align-items: flex-start;
-            margin-bottom: 5px;
+            margin-bottom: 10px;
         }
 
         .project-header h2 {
@@ -166,34 +189,43 @@
             font-size: 22px;
             font-weight: 600;
             line-height: 1.2;
-            max-width: 80%;
+            max-width: 60%; /* Limit width so button fits */
         }
 
-        /* GITHUB LINK STYLING */
-        .github-link {
+        /* NEW BIG REPO BUTTON */
+        .repo-btn-big {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            background-color: #f8f8f8;
+            border: 1px solid #ccc;
+            padding: 8px 12px;
+            border-radius: 5px;
             text-decoration: none;
-            color: #555;
-            font-size: 10px;
-            font-weight: bold;
-            min-width: 60px;
-            text-align: center;
-            margin-left: 10px;
-            opacity: 0.7;
-            transition: opacity 0.2s;
-        }
-
-        .github-link:hover {
-            opacity: 1;
             color: #000;
+            font-size: 11px;
+            font-weight: 800; /* Extra Bold */
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 0 #ddd;
         }
 
-        .github-link img {
-            width: 24px;
-            height: 24px;
-            margin-bottom: 2px;
+        .repo-btn-big:hover {
+            background-color: #000;
+            color: #fff;
+            border-color: #000;
+            box-shadow: 0 2px 0 #333;
+        }
+
+        .repo-btn-big:active {
+            transform: translateY(2px);
+            box-shadow: none;
+        }
+
+        .repo-btn-big img {
+            width: 16px;
+            height: 16px;
+            margin-right: 8px;
         }
 
         .project-meta {
@@ -282,25 +314,33 @@
             .container { flex-direction: column; }
             .sidebar { border-top: 1px solid #eee; padding-top: 30px; }
             .project-card { flex-direction: column; }
-            .project-icon { width: 50px; height: 50px; font-size: 18px; margin-bottom: 10px;}
             .project-header { flex-direction: column; }
-            .github-link { flex-direction: row; margin-left: 0; margin-top: 10px; }
-            .github-link span { margin-left: 5px; }
+            .repo-btn-big { width: 100%; justify-content: center; margin-top: 10px; }
+            .project-header h2 { max-width: 100%; }
+            header { flex-direction: column; gap: 15px; text-align: center; }
+            .profile-section { flex-direction: column; }
+            .profile-pic { margin-right: 0; margin-bottom: 10px; }
+            .profile-info { align-items: center; }
         }
 
     </style>
 </head>
 <body>
 
-    <!-- COLOR BAR: GOOGLE COLORS (Blue, Red, Yellow, Green) -->
+    <!-- COLOR BAR: GOOGLE COLORS -->
     <div class="top-bar"></div>
 
     <!-- HEADER -->
     <header>
-        <div class="logo">
-            <!-- SVG REMOVED PER REQUEST -->
-            <span>AnsCom Labs</span>
-        </div>
+        <!-- PROFILE SECTION TOP LEFT -->
+        <a href="https://github.com/PC5518/" class="profile-section">
+            <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
+            <div class="profile-info">
+                <span class="brand-name">AnsCom Labs</span>
+                <span class="profile-link-text">View my profile of GitHub &rarr;</span>
+            </div>
+        </a>
+
         <nav class="header-nav">
             <a href="#">Philosophy</a>
             <a href="#">Architecture</a>
@@ -325,14 +365,13 @@
                 <div class="project-icon">Au</div>
                 <div class="project-content">
                     
-                    <!-- Header with Title and GitHub Link -->
+                    <!-- Header with Title and BIG BUTTON -->
                     <div class="project-header">
                         <h2>Post-Market Fair Value Estimation Engine</h2>
                         
-                        <!-- GITHUB LINK 1 -->
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank" class="github-link">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub Repo">
-                            <span>View Repo</span>
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank" class="repo-btn-big">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH">
+                            VIEW THE GITHUB REPOSITORY
                         </a>
                     </div>
 
@@ -362,14 +401,13 @@
                 <div class="project-icon">Z</div>
                 <div class="project-content">
                     
-                    <!-- Header with Title and GitHub Link -->
+                    <!-- Header with Title and BIG BUTTON -->
                     <div class="project-header">
                         <h2>ZENTEC Constraint-Bound Prediction System</h2>
                         
-                        <!-- GITHUB LINK 2 -->
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank" class="github-link">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub Repo">
-                            <span>View Repo</span>
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank" class="repo-btn-big">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH">
+                            VIEW THE GITHUB REPOSITORY
                         </a>
                     </div>
 
@@ -414,7 +452,7 @@
             <div class="sidebar-box">
                 <div class="sidebar-header" style="border-bottom: 1px solid #ddd; padding-bottom: 5px;">System Specs</div>
                 <div class="deadline-box" style="margin-top: 15px; border-left: 3px solid var(--mit-red);">
-                    <strong>My name:</strong> Aditya Narayan Singh<br>
+                    <strong>System Architect:</strong> Aditya Narayan Singh<br>
                     <strong>Role:</strong> Independent Systems Architect & Quantitative Modeler<br>
                     <strong>Context:</strong> My Maker Portfolio under my Github webpage PC5518
                 </div>
