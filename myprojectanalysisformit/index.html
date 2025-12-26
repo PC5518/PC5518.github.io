@@ -9,17 +9,15 @@
         /* 
            DESIGN SYSTEM: MIT ADMISSIONS STYLE
            FONT: HELVETICA NEUE / ARIAL
-           PALETTE: WHITE, BLACK, MIT RED (#A31F34), GRAY
+           PALETTE: WHITE, BLACK, GOOGLE COLORS, GRAY
         */
 
         :root {
-            --mit-red: #A31F34;
+            --mit-red: #A31F34; /* Keeping for accents inside cards */
             --mit-gray: #8A8B8C;
             --text-black: #111;
             --text-light: #555;
             --bg-color: #fff;
-            --link-color: #000;
-            --hover-color: #A31F34;
         }
 
         * {
@@ -36,15 +34,16 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* TOP COLOR BAR */
+        /* TOP COLOR BAR - GOOGLE COLORS */
         .top-bar {
             height: 4px;
             width: 100%;
             background: linear-gradient(90deg, 
-                var(--mit-red) 0%, var(--mit-red) 25%, 
-                var(--mit-gray) 25%, var(--mit-gray) 50%, 
-                #000 50%, #000 75%, 
-                var(--mit-red) 75%, var(--mit-red) 100%);
+                #4285F4 0%, #4285F4 25%,  /* Google Blue */
+                #EA4335 25%, #EA4335 50%, /* Google Red */
+                #FBBC05 50%, #FBBC05 75%, /* Google Yellow */
+                #34A853 75%, #34A853 100% /* Google Green */
+            );
         }
 
         /* HEADER */
@@ -66,8 +65,10 @@
             align-items: center;
         }
 
+        /* LOGO SVG REMOVED - JUST TEXT LEFT */
         .logo span {
-            margin-left: 10px;
+            /* Removed margin-left since icon is gone */
+            margin-left: 0; 
             font-weight: 400;
             font-size: 20px;
             color: var(--text-black);
@@ -124,7 +125,7 @@
             font-weight: 400;
         }
 
-        /* PROJECT ITEM (BLOG POST STYLE) */
+        /* PROJECT ITEM */
         .project-card {
             display: flex;
             margin-bottom: 50px;
@@ -152,17 +153,54 @@
             flex-grow: 1;
         }
 
+        /* Updated Header to Flex for GitHub Link */
+        .project-header {
+            display: flex;
+            justify-content: space-between; /* Pushes content to edges */
+            align-items: flex-start;
+            margin-bottom: 5px;
+        }
+
         .project-header h2 {
-            margin: 0 0 5px 0;
+            margin: 0;
             font-size: 22px;
             font-weight: 600;
             line-height: 1.2;
+            max-width: 80%;
+        }
+
+        /* GITHUB LINK STYLING */
+        .github-link {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #555;
+            font-size: 10px;
+            font-weight: bold;
+            min-width: 60px;
+            text-align: center;
+            margin-left: 10px;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .github-link:hover {
+            opacity: 1;
+            color: #000;
+        }
+
+        .github-link img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 2px;
         }
 
         .project-meta {
             font-size: 13px;
             color: var(--text-light);
             margin-bottom: 15px;
+            margin-top: 5px;
         }
 
         .project-desc {
@@ -172,12 +210,12 @@
             font-weight: 300;
         }
 
-        /* THE PIPELINE LINKS (The 5 Links) */
+        /* THE PIPELINE LINKS */
         .pipeline-nav {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            font-family: "Courier New", monospace; /* Technical font for the steps */
+            font-family: "Courier New", monospace;
             font-size: 12px;
             background: #f9f9f9;
             padding: 10px;
@@ -187,7 +225,7 @@
 
         .pipeline-nav a {
             text-decoration: none;
-            color: #d1445b; /* Pinkish red from screenshot */
+            color: #d1445b;
             font-weight: 600;
             position: relative;
             padding-right: 12px;
@@ -207,7 +245,7 @@
         }
 
         .pipeline-nav a.highlight {
-            color: #e68a00; /* Yellow/Orange for crucial steps */
+            color: #e68a00;
         }
 
         .pipeline-nav a:hover {
@@ -232,21 +270,11 @@
             margin-bottom: 15px;
         }
         
-        .sidebar-img {
-            width: 80px;
-            height: auto;
-            margin-bottom: 15px;
-        }
-
         .deadline-box {
             background: #fcfcfc;
             border: 1px solid #eee;
             padding: 15px;
             font-size: 13px;
-        }
-
-        .deadline-icon {
-            margin-right: 8px;
         }
 
         /* MOBILE RESPONSIVE */
@@ -255,27 +283,22 @@
             .sidebar { border-top: 1px solid #eee; padding-top: 30px; }
             .project-card { flex-direction: column; }
             .project-icon { width: 50px; height: 50px; font-size: 18px; margin-bottom: 10px;}
+            .project-header { flex-direction: column; }
+            .github-link { flex-direction: row; margin-left: 0; margin-top: 10px; }
+            .github-link span { margin-left: 5px; }
         }
 
     </style>
 </head>
 <body>
 
-    <!-- COLOR BAR -->
+    <!-- COLOR BAR: GOOGLE COLORS (Blue, Red, Yellow, Green) -->
     <div class="top-bar"></div>
 
     <!-- HEADER -->
     <header>
         <div class="logo">
-            <svg width="40" height="24" viewBox="0 0 64 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect x="0" y="0" width="10" height="38" fill="black"/>
-                <rect x="18" y="0" width="10" height="38" fill="black"/>
-                <rect x="36" y="0" width="10" height="38" fill="black"/>
-                <rect x="0" y="0" width="10" height="12" fill="#A31F34"/>
-                <rect x="18" y="0" width="10" height="12" fill="#A31F34"/>
-                <rect x="36" y="0" width="10" height="12" fill="#A31F34"/>
-                <rect x="54" y="0" width="10" height="22" fill="black"/>
-            </svg>
+            <!-- SVG REMOVED PER REQUEST -->
             <span>AnsCom Labs</span>
         </div>
         <nav class="header-nav">
@@ -301,9 +324,18 @@
             <article class="project-card">
                 <div class="project-icon">Au</div>
                 <div class="project-content">
+                    
+                    <!-- Header with Title and GitHub Link -->
                     <div class="project-header">
                         <h2>Post-Market Fair Value Estimation Engine</h2>
+                        
+                        <!-- GITHUB LINK 1 -->
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank" class="github-link">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub Repo">
+                            <span>View Repo</span>
+                        </a>
                     </div>
+
                     <div class="project-meta">
                         by Aditya N. Singh • Indian Gold ETFs • Arbitrage
                     </div>
@@ -329,9 +361,18 @@
             <article class="project-card">
                 <div class="project-icon">Z</div>
                 <div class="project-content">
+                    
+                    <!-- Header with Title and GitHub Link -->
                     <div class="project-header">
                         <h2>ZENTEC Constraint-Bound Prediction System</h2>
+                        
+                        <!-- GITHUB LINK 2 -->
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank" class="github-link">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GitHub Repo">
+                            <span>View Repo</span>
+                        </a>
                     </div>
+
                     <div class="project-meta">
                         by Aditya N. Singh • NSE Derivatives • Machine Learning
                     </div>
@@ -358,10 +399,10 @@
             <div class="sidebar-box">
                 <div class="sidebar-header">Welcome to AnsCom Labs.</div>
                 <p class="sidebar-text">
-                    This laboratory documents the internal engineering evolution <strong>of my quantitative systems </strong> built under real-world data, market, financial and infrastructure constraints.
+                    This laboratory documents the internal engineering evolution <strong>of my quantitative systems</strong> built under real-world data, market, financial and infrastructure constraints.
                 </p>
                 <p class="sidebar-text">
-                    This lab documents the <em>evolution </em> and <em> approach involved</em> that occurred before the final system was built.
+                    This lab documents the <em>evolution</em> and <em>approach involved</em> that occurred before the final system was built.
                 </p>
                 <!-- Small graphic placeholder -->
                 <svg width="60" height="60" viewBox="0 0 100 100" fill="none" stroke="#333" stroke-width="2">
