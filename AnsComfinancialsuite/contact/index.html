@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Protocols | AnsCom Quantitative Suite</title>
+    
+    <style>
+        /* 
+           DESIGN SYSTEM: ADAPTED MAKER PORTFOLIO
+           SAME THEME AS MAIN INDEX
+        */
+
+        :root {
+            --accent-color: #A31F34; 
+            --accent-gray: #8A8B8C;
+            --text-black: #111;
+            --text-light: #555;
+            --bg-color: #fff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-black);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* TOP COLOR BAR */
+        .top-bar {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                #4285F4 0%, #4285F4 25%, 
+                #EA4335 25%, #EA4335 50%, 
+                #FBBC05 50%, #FBBC05 75%, 
+                #34A853 75%, #34A853 100% 
+            );
+        }
+
+        /* HEADER */
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .profile-pic {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 2px solid #fafafa;
+            margin-right: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .brand-name {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .profile-link-text {
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .profile-link-text:hover { text-decoration: underline; color: var(--accent-color); }
+
+        .header-nav a {
+            text-decoration: none;
+            color: var(--text-black);
+            font-weight: 600;
+            margin-left: 25px;
+            font-size: 14px;
+        }
+        
+        .header-nav a.active {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+        
+        .header-nav a:hover { color: var(--accent-color); }
+
+        /* MAIN LAYOUT */
+        .container {
+            max-width: 800px; /* Narrower for contact page readability */
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--text-black);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* CONTACT CARDS */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+
+        .contact-card {
+            border: 1px solid #eee;
+            padding: 25px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            background: #fafafa;
+        }
+
+        .contact-card:hover {
+            border-color: var(--accent-color);
+            background: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 20px;
+        }
+
+        .contact-info h3 {
+            margin: 0 0 5px 0;
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .contact-info a {
+            color: var(--text-black);
+            text-decoration: none;
+            font-family: monospace;
+            font-size: 15px;
+            position: relative;
+        }
+
+        .contact-info a:hover {
+            color: var(--accent-color);
+            text-decoration: underline;
+        }
+
+        .email-tag {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--accent-gray);
+            letter-spacing: 1px;
+            margin-top: 5px;
+            display: block;
+        }
+        
+        .copy-note {
+            margin-top: 40px;
+            font-size: 13px;
+            color: #666;
+            text-align: center;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+
+        @media (max-width: 600px) {
+            header { flex-direction: column; text-align: center; gap: 15px; }
+            .contact-card { flex-direction: column; text-align: center; }
+            .icon-box { margin-right: 0; margin-bottom: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar"></div>
+
+    <header>
+        <a href="index.html" class="profile-section">
+            <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
+            <div class="profile-info">
+                <span class="brand-name">AnsCom Suite</span>
+                <span class="profile-link-text">Aditya Narayan Singh (PC5518)</span>
+            </div>
+        </a>
+
+        <nav class="header-nav">
+            <a href="index.html">Quantitative Research</a>
+            <a href="index.html">Telemetry</a>
+            <!-- Active Class on Contact -->
+            <a href="contact.html" class="active">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <div class="section-title">
+            Communication Protocols
+            <span>Active Channels</span>
+        </div>
+
+        <div class="contact-grid">
+            
+            <!-- Primary Outlook -->
+            <div class="contact-card">
+                <div class="icon-box">📧</div>
+                <div class="contact-info">
+                    <h3>Primary Research Inquiry</h3>
+                    <a href="mailto:adityansdsdc@outlook.com">adityansdsdc@outlook.com</a>
+                    <span class="email-tag">Outlook • Professional</span>
+                </div>
+            </div>
+
+            <!-- Gmail 1 -->
+            <div class="contact-card">
+                <div class="icon-box">📨</div>
+                <div class="contact-info">
+                    <h3>Development & Personal</h3>
+                    <a href="mailto:adityadevapc@gmail.com">adityadevapc@gmail.com</a>
+                    <span class="email-tag">Gmail • Direct</span>
+                </div>
+            </div>
+
+            <!-- Hotmail -->
+            <div class="contact-card">
+                <div class="icon-box">💼</div>
+                <div class="contact-info">
+                    <h3>Legacy & Formal</h3>
+                    <a href="mailto:aditya.narayansingh@hotmail.com">aditya.narayansingh@hotmail.com</a>
+                    <span class="email-tag">Hotmail • Business</span>
+                </div>
+            </div>
+
+            <!-- Storage/Archive Email -->
+            <div class="contact-card">
+                <div class="icon-box">💾</div>
+                <div class="contact-info">
+                    <h3>Data Archival</h3>
+                    <a href="mailto:storageofoneplus@gmail.com">storageofoneplus@gmail.com</a>
+                    <span class="email-tag">Gmail • Storage</span>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="copy-note">
+            Please use the <strong>Outlook</strong> address for all formal Quantitative Research or AnsCom inquiries.
+        </div>
+
+    </div>
+
+</body>
+</html>
