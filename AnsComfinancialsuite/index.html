@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnsCom Quantitative Suite |Aditya Narayan Singh| PC5518</title>
+    
+    <style>
+        /* 
+           DESIGN SYSTEM: ADAPTED MAKER PORTFOLIO
+           FONT: HELVETICA NEUE / ARIAL
+           PALETTE: CLEAN WHITE, BLACK, ACCENT RED
+        */
+
+        :root {
+            --accent-color: #A31F34; 
+            --accent-gray: #8A8B8C;
+            --text-black: #111;
+            --text-light: #555;
+            --bg-color: #fff;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-black);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* TOP COLOR BAR */
+        .top-bar {
+            height: 4px;
+            width: 100%;
+            background: linear-gradient(90deg, 
+                #4285F4 0%, #4285F4 25%, 
+                #EA4335 25%, #EA4335 50%, 
+                #FBBC05 50%, #FBBC05 75%, 
+                #34A853 75%, #34A853 100% 
+            );
+        }
+
+        /* HEADER */
+        header {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #000;
+        }
+
+        .profile-pic {
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            border: 2px solid #fafafa;
+            margin-right: 18px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .brand-name {
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1;
+        }
+
+        .profile-link-text {
+            font-size: 12px;
+            color: #555;
+            font-weight: 600;
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .profile-link-text:hover { text-decoration: underline; color: var(--accent-color); }
+
+        .header-nav a {
+            text-decoration: none;
+            color: var(--text-black);
+            font-weight: 600;
+            margin-left: 25px;
+            font-size: 14px;
+        }
+        .header-nav a:hover { color: var(--accent-color); }
+
+        /* MAIN LAYOUT */
+        .container {
+            max-width: 1100px;
+            margin: 40px auto;
+            display: flex;
+            padding: 0 20px;
+            gap: 60px;
+        }
+
+        .main-column { flex: 2; }
+        .sidebar { flex: 1; padding-top: 10px; }
+
+        /* SECTION TITLE */
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--text-black);
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .section-title span.count { color: var(--accent-gray); font-weight: 400; }
+
+        /* PROJECT CARD */
+        .project-card {
+            display: flex;
+            margin-bottom: 60px;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .project-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #f8f9fa;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--text-black);
+            border: 1px solid #ddd;
+        }
+
+        .project-content { flex-grow: 1; }
+
+        .project-header {
+            display: flex;
+            justify-content: space-between; 
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .project-header h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: 700;
+            line-height: 1.2;
+            max-width: 65%;
+        }
+
+        /* REPO BUTTON */
+        .repo-btn-big {
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 6px 10px;
+            border-radius: 4px;
+            text-decoration: none;
+            color: #333;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+        .repo-btn-big:hover { border-color: #000; background: #000; color: #fff; }
+        .repo-btn-big img { width: 14px; height: 14px; margin-right: 6px; }
+
+        .project-meta {
+            font-size: 13px;
+            color: var(--accent-gray);
+            margin-bottom: 12px;
+            font-family: monospace;
+        }
+
+        .project-desc {
+            font-size: 15px;
+            color: #222;
+            margin-bottom: 15px;
+        }
+
+        /* PROCESS LINKS */
+        .pipeline-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-family: "Courier New", monospace;
+            font-size: 12px;
+            background: #f4f4f4;
+            padding: 12px;
+            border-radius: 4px;
+            border-left: 3px solid #333;
+        }
+
+        .pipeline-nav a {
+            text-decoration: none;
+            color: #A31F34;
+            font-weight: 700;
+            position: relative;
+            padding-right: 14px;
+        }
+
+        .pipeline-nav a::after {
+            content: "→";
+            position: absolute;
+            right: 0;
+            color: #999;
+            font-size: 10px;
+            top: 1px;
+        }
+        .pipeline-nav a:last-child::after { content: ""; }
+        .pipeline-nav a:hover { text-decoration: underline; }
+
+        /* SIDEBAR */
+        .sidebar-box { margin-bottom: 40px; }
+        .sidebar-header { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+        
+        .sidebar-text {
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 15px;
+            border-left: 2px solid #ddd;
+            padding-left: 15px;
+        }
+        
+        .tech-stack-tag {
+            display: inline-block;
+            background: #eee;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin: 2px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container { flex-direction: column; }
+            .sidebar { border-top: 1px solid #eee; padding-top: 30px; }
+            .project-header { flex-direction: column; gap: 10px; }
+            .project-header h2 { max-width: 100%; }
+            header { flex-direction: column; text-align: center; gap: 15px; }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="top-bar"></div>
+
+    <header>
+        <a href="https://github.com/PC5518/" class="profile-section">
+            <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
+            <div class="profile-info">
+                <span class="brand-name">AnsCom Suite</span>
+                <span class="profile-link-text">Aditya Narayan Singh (PC5518)</span>
+            </div>
+        </a>
+
+        <nav class="header-nav">
+            <a href="#">Quantitative Research</a>
+            <a href="#">Telemetry</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <!-- LEFT COLUMN: PROJECTS -->
+        <main class="main-column">
+            
+            <div class="section-title">
+                Active Research Modules
+                <span class="count">4 Selected Projects</span>
+            </div>
+
+            <!-- PROJECT 1: GOLD FAIR VALUE (Pricing) -->
+            <article class="project-card">
+                <div class="project-icon">Au</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>Gold ETF Fair Value Engine</h2>
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="repo-btn-big" target="_blank">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
+                        </a>
+                    </div>
+                    <div class="project-meta">PRICING INFRASTRUCTURE • FOREX PARITY • ARBITRAGE</div>
+                    <div class="project-desc">
+                        A live terminal that approximates the ICICI Prudential Gold ETF (GOLDIETF) price after NSE market hours. Utilizes real-time XAUUSD (Global Spot) and USDINR feeds to calculate fair-value gaps for next-day open.
+                    </div>
+                    <div class="pipeline-nav">
+                        <a href="#">Gap Analysis</a>
+                        <a href="#">Currency Hedge</a>
+                        <a href="#">Forensic Pricing</a>
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine">Source Code</a>
+                    </div>
+                </div>
+            </article>
+
+            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+
+            <!-- PROJECT 2: TELEMETRY & TERMINAL -->
+            <article class="project-card">
+                <div class="project-icon">Tx</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>AnsCom Terminal & netDepth</h2>
+                        <a href="https://github.com/PC5518/ansCom-terminal-equity-marketos" class="repo-btn-big" target="_blank">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
+                        </a>
+                    </div>
+                    <div class="project-meta">TELEMETRY ANALYTICS • MULTI-THREADING • DASHBOARD</div>
+                    <div class="project-desc">
+                        A suite of telemetry tools including <strong>AnsCom Terminal</strong> (real-time equity/crypto profit tracking built from scratch) and <strong>netDepth Ultimate</strong> (high-performance network telemetry dashboard). Monitors 40+ metrics in real-time.
+                    </div>
+                    <div class="pipeline-nav">
+                        <a href="#">Custom TradingView</a>
+                        <a href="#">Multi-threading</a>
+                        <a href="#">Network Telemetry</a>
+                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate">View netDepth Repo</a>
+                    </div>
+                </div>
+            </article>
+
+            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+
+            <!-- PROJECT 3: ML PREDICTION -->
+            <article class="project-card">
+                <div class="project-icon">ML</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>ZENTEC Stock Prediction</h2>
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="repo-btn-big" target="_blank">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
+                        </a>
+                    </div>
+                    <div class="project-meta">TIME-SERIES MODELING • RANDOM FOREST • TECHNICALS</div>
+                    <div class="project-desc">
+                        Machine-learning model predicting next-day move and BUY/SELL/HOLD recommendations for NSE:ZENTEC. Trained on 10+ years of OHLC data combined with SMA, EMA, and RSI technical indicators.
+                    </div>
+                    <div class="pipeline-nav">
+                        <a href="#">Data Cleaning</a>
+                        <a href="#">Feature Engineering</a>
+                        <a href="#">Backtesting</a>
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml">Source Code</a>
+                    </div>
+                </div>
+            </article>
+
+            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+
+            <!-- PROJECT 4: INDEX CONSTRUCTION -->
+            <article class="project-card">
+                <div class="project-icon">Ix</div>
+                <div class="project-content">
+                    <div class="project-header">
+                        <h2>AnsCom AI10 Tech Index</h2>
+                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="repo-btn-big" target="_blank">
+                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
+                        </a>
+                    </div>
+                    <div class="project-meta">INDEX CONSTRUCTION • ALTERNATIVE DATA</div>
+                    <div class="project-desc">
+                        A personalized technology index created to track the top 10 U.S.-listed tech companies based on artificial intelligence exposure. Updates live index values using real-time market data feeds.
+                    </div>
+                    <div class="pipeline-nav">
+                        <a href="#">Weighting Methodology</a>
+                        <a href="#">Rebalancing</a>
+                        <a href="https://github.com/PC5518/anscom-ai10-tech-index">Source Code</a>
+                    </div>
+                </div>
+            </article>
+
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar-box">
+                <div class="sidebar-header">About the Suite</div>
+                <p class="sidebar-text" style="font-weight: 500; color: #111;">
+                    Built quantitative research infrastructure for fair-value pricing, telemetry analytics, and ML time-series modeling in Indian capital markets.
+                </p>
+                <p class="sidebar-text">
+                    This portfolio separates the quantitative signal processing and infrastructure tools from general utility projects, focusing on financial engineering.
+                </p>
+            </div>
+
+            <div class="sidebar-box">
+                <div class="sidebar-header">Tech Stack</div>
+                <div>
+                    <span class="tech-stack-tag">Python</span>
+                    <span class="tech-stack-tag">Pandas/Numpy</span>
+                    <span class="tech-stack-tag">Scikit-Learn</span>
+                    <span class="tech-stack-tag">Matplotlib</span>
+                    <span class="tech-stack-tag">CustomTkinter</span>
+                    <span class="tech-stack-tag">NSEPy</span>
+                </div>
+            </div>
+
+            <div class="sidebar-box">
+                <div class="sidebar-header">Focus Areas</div>
+                <ul style="padding-left: 20px; font-size: 14px; color: #444;">
+                    <li>Post-Market Fair Value</li>
+                    <li>Network Telemetry</li>
+                    <li>Algorithmic Trading Infra</li>
+                    <li>Statistical Arbitrage</li>
+                </ul>
+            </div>
+        </aside>
+
+    </div>
+
+</body>
+</html>
