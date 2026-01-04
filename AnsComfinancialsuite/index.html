@@ -3,24 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnsCom Quantitative Suite |Aditya Narayan Singh| PC5518</title>
+    <title>AnsCom Quantitative Suite | Aditya Narayan Singh | PC5518</title>
     
     <style>
         /* 
            DESIGN SYSTEM: ADAPTED MAKER PORTFOLIO
-           FONT: HELVETICA NEUE / ARIAL
-           PALETTE: CLEAN WHITE, BLACK, ACCENT RED
+           THEME ENGINE & LAYOUT
         */
 
         :root {
+            /* Default (Light) Theme Variables */
             --accent-color: #A31F34; 
             --accent-gray: #8A8B8C;
             --text-black: #111;
             --text-light: #555;
             --bg-color: #fff;
+            --card-bg: #fff;
+            --header-bg: #fff;
+            --border-color: #e0e0e0;
+            --sidebar-bg: #fff;
+            --icon-bg: #f8f9fa;
+            --nav-bg: #f4f4f4;
+            --marquee-bg: #111;
+            --marquee-text: #fff;
         }
 
-        * { box-sizing: border-box; }
+        /* THEME OVERRIDES */
+        [data-theme="dark"] {
+            --accent-color: #FF5A5F;
+            --accent-gray: #aaa;
+            --text-black: #f0f0f0;
+            --text-light: #ccc;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --header-bg: #1e1e1e;
+            --border-color: #333;
+            --sidebar-bg: #1e1e1e;
+            --icon-bg: #2d2d2d;
+            --nav-bg: #2d2d2d;
+            --marquee-bg: #000;
+        }
+
+        [data-theme="blue"] {
+            --accent-color: #4facfe;
+            --accent-gray: #93a5cf;
+            --text-black: #e0f7fa;
+            --text-light: #b3e5fc;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --header-bg: #1e293b;
+            --border-color: #334155;
+            --sidebar-bg: #1e293b;
+            --icon-bg: #334155;
+            --nav-bg: #334155;
+            --marquee-bg: #020617;
+        }
+
+        [data-theme="high-contrast"] {
+            --accent-color: #ffff00;
+            --accent-gray: #fff;
+            --text-black: #fff;
+            --text-light: #fff;
+            --bg-color: #000;
+            --card-bg: #000;
+            --header-bg: #000;
+            --border-color: #fff;
+            --sidebar-bg: #000;
+            --icon-bg: #000;
+            --nav-bg: #000;
+            --marquee-bg: #fff;
+            --marquee-text: #000;
+        }
+        
+        [data-theme="low-contrast"] {
+            --accent-color: #8c7b75;
+            --accent-gray: #8c8c8c;
+            --text-black: #4a4a4a;
+            --text-light: #6e6e6e;
+            --bg-color: #fdf6e3;
+            --card-bg: #fdf6e3;
+            --header-bg: #fdf6e3;
+            --border-color: #d6d6d6;
+            --sidebar-bg: #fdf6e3;
+            --icon-bg: #eee8d5;
+            --nav-bg: #eee8d5;
+            --marquee-bg: #4a4a4a;
+        }
+
+        /* High Contrast Specific Borders */
+        [data-theme="high-contrast"] .project-card, 
+        [data-theme="high-contrast"] .sidebar-box,
+        [data-theme="high-contrast"] nav a,
+        [data-theme="high-contrast"] .project-icon {
+            border: 2px solid #fff !important;
+        }
+        [data-theme="high-contrast"] .repo-btn-big {
+            background: #000; color: #fff; border: 2px solid #fff;
+        }
+
+        * { box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
 
         body {
             margin: 0;
@@ -30,6 +111,47 @@
             color: var(--text-black);
             line-height: 1.6;
             -webkit-font-smoothing: antialiased;
+        }
+
+        /* MARQUEE STYLES */
+        .marquee-container {
+            width: 100%;
+            background-color: var(--marquee-bg);
+            color: var(--marquee-text);
+            padding: 8px 0;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            will-change: transform;
+            animation: marquee 25s linear infinite;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            font-family: "Courier New", monospace;
+        }
+
+        .marquee-content span {
+            margin-right: 50px;
+        }
+        
+        .marquee-content span::before {
+            content: "✦";
+            color: var(--accent-color);
+            margin-right: 10px;
+        }
+
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+
+        .marquee-container:hover .marquee-content {
+            animation-play-state: paused;
         }
 
         /* TOP COLOR BAR */
@@ -46,56 +168,100 @@
 
         /* HEADER */
         header {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 25px 20px;
+            padding: 20px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #e0e0e0;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--header-bg);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            flex: 1;
         }
 
         .profile-section {
             display: flex;
             align-items: center;
             text-decoration: none;
-            color: #000;
+            color: var(--text-black);
         }
 
         .profile-pic {
             width: 65px;
             height: 65px;
             border-radius: 50%;
-            border: 2px solid #fafafa;
+            border: 2px solid var(--border-color);
             margin-right: 18px;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
 
         .brand-name {
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             letter-spacing: -0.5px;
             line-height: 1;
+            display: block;
         }
 
         .profile-link-text {
             font-size: 12px;
-            color: #555;
+            color: var(--text-light);
             font-weight: 600;
             margin-top: 4px;
             text-transform: uppercase;
+            display: block;
         }
 
-        .profile-link-text:hover { text-decoration: underline; color: var(--accent-color); }
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
 
         .header-nav a {
             text-decoration: none;
             color: var(--text-black);
             font-weight: 600;
-            margin-left: 25px;
-            font-size: 14px;
+            font-size: 13px;
+            transition: 0.2s;
         }
         .header-nav a:hover { color: var(--accent-color); }
+
+        .header-right {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* THEME SWITCHER */
+        .theme-select {
+            padding: 5px 10px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+            background-color: var(--bg-color);
+            color: var(--text-black);
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+
+        /* LOGO RIGHT */
+        .right-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-color);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
 
         /* MAIN LAYOUT */
         .container {
@@ -120,6 +286,7 @@
             border-bottom: 2px solid var(--text-black);
             display: flex;
             justify-content: space-between;
+            color: var(--text-black);
         }
         
         .section-title span.count { color: var(--accent-gray); font-weight: 400; }
@@ -130,13 +297,14 @@
             margin-bottom: 60px;
             gap: 20px;
             align-items: flex-start;
+            background-color: var(--card-bg);
         }
 
         .project-icon {
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background-color: #f8f9fa;
+            background-color: var(--icon-bg);
             flex-shrink: 0;
             display: flex;
             align-items: center;
@@ -144,7 +312,7 @@
             font-size: 20px;
             font-weight: 800;
             color: var(--text-black);
-            border: 1px solid #ddd;
+            border: 1px solid var(--border-color);
         }
 
         .project-content { flex-grow: 1; }
@@ -162,24 +330,25 @@
             font-weight: 700;
             line-height: 1.2;
             max-width: 65%;
+            color: var(--text-black);
         }
 
         /* REPO BUTTON */
         .repo-btn-big {
             display: flex;
             align-items: center;
-            background-color: #fff;
+            background-color: var(--bg-color);
             border: 1px solid #ccc;
             padding: 6px 10px;
             border-radius: 4px;
             text-decoration: none;
-            color: #333;
+            color: var(--text-black);
             font-size: 11px;
             font-weight: 700;
             text-transform: uppercase;
             transition: all 0.2s;
         }
-        .repo-btn-big:hover { border-color: #000; background: #000; color: #fff; }
+        .repo-btn-big:hover { border-color: var(--accent-color); color: var(--accent-color); }
         .repo-btn-big img { width: 14px; height: 14px; margin-right: 6px; }
 
         .project-meta {
@@ -191,7 +360,7 @@
 
         .project-desc {
             font-size: 15px;
-            color: #222;
+            color: var(--text-black);
             margin-bottom: 15px;
         }
 
@@ -202,15 +371,15 @@
             gap: 12px;
             font-family: "Courier New", monospace;
             font-size: 12px;
-            background: #f4f4f4;
+            background: var(--nav-bg);
             padding: 12px;
             border-radius: 4px;
-            border-left: 3px solid #333;
+            border-left: 3px solid var(--text-black);
         }
 
         .pipeline-nav a {
             text-decoration: none;
-            color: #A31F34;
+            color: var(--accent-color);
             font-weight: 700;
             position: relative;
             padding-right: 14px;
@@ -220,7 +389,7 @@
             content: "→";
             position: absolute;
             right: 0;
-            color: #999;
+            color: var(--accent-gray);
             font-size: 10px;
             top: 1px;
         }
@@ -229,32 +398,39 @@
 
         /* SIDEBAR */
         .sidebar-box { margin-bottom: 40px; }
-        .sidebar-header { font-size: 18px; font-weight: 700; margin-bottom: 15px; }
+        .sidebar-header { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--text-black); }
         
         .sidebar-text {
             font-size: 14px;
-            color: #444;
+            color: var(--text-light);
             margin-bottom: 15px;
-            border-left: 2px solid #ddd;
+            border-left: 2px solid var(--border-color);
             padding-left: 15px;
         }
         
         .tech-stack-tag {
             display: inline-block;
-            background: #eee;
+            background: var(--icon-bg);
+            color: var(--text-black);
             padding: 2px 6px;
             border-radius: 3px;
             font-size: 11px;
             margin: 2px;
             font-weight: 600;
+            border: 1px solid transparent;
         }
 
-        @media (max-width: 768px) {
+        hr {
+            border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;
+        }
+
+        @media (max-width: 900px) {
+            header { flex-direction: column; gap: 15px; text-align: center; }
+            .header-left, .header-center, .header-right { justify-content: center; width: 100%; }
             .container { flex-direction: column; }
-            .sidebar { border-top: 1px solid #eee; padding-top: 30px; }
+            .sidebar { border-top: 1px solid var(--border-color); padding-top: 30px; }
             .project-header { flex-direction: column; gap: 10px; }
             .project-header h2 { max-width: 100%; }
-            header { flex-direction: column; text-align: center; gap: 15px; }
         }
 
     </style>
@@ -263,21 +439,46 @@
 
     <div class="top-bar"></div>
 
-    <header>
-        <a href="https://github.com/PC5518/" class="profile-section">
-            <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
-            <div class="profile-info">
-                <span class="brand-name">AnsCom Quantitative Suite | Indian Capital Markets Research Lab|</span>
-                <span class="profile-link-text">Aditya Narayan Singh (PC5518)</span>
-            </div>
-        </a>
+    <!-- MARQUEE SECTION -->
+    <div class="marquee-container">
+        <div class="marquee-content">
+            <span>For research analysis contact us.</span>
+            <span>Gold ETF, fair value engine may need Xpath analysis for NSE.</span>
+            <span>AnsCom Terminal: Real-time Telemetry Active.</span>
+            <span>Updates: NIFTY-500 Module Live.</span>
+        </div>
+    </div>
 
-        <nav class="header-nav">
+    <header>
+        <div class="header-left">
+            <a href="https://github.com/PC5518/" class="profile-section">
+                <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
+                <div class="profile-info">
+                    <span class="brand-name">AnsCom Quantitative Suite</span>
+                    <span class="profile-link-text">Aditya Narayan Singh (PC5518)</span>
+                </div>
+            </a>
+        </div>
+
+        <nav class="header-center header-nav">
             <a href="#">Quantitative Research</a>
             <a href="#">Telemetry</a>
-            <!-- LINK ACTIVATED HERE -->
             <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/">Contact us/Suggest Changes</a>
         </nav>
+
+        <div class="header-right">
+            <!-- THEME SWITCHER -->
+            <select id="themeSwitcher" class="theme-select" onchange="setTheme(this.value)">
+                <option value="light">Light Theme</option>
+                <option value="dark">Dark Theme</option>
+                <option value="blue">Blue Theme</option>
+                <option value="high-contrast">High Contrast</option>
+                <option value="low-contrast">Low Contrast</option>
+            </select>
+            
+            <!-- RIGHT SIDE LOGO -->
+            <img src="https://yt3.googleusercontent.com/x-u83dWZlsQSHiaxO1FcxCBG3_mIHskESvkx_wMXqaA5EwZyIHUxZLZroI-IkYtxqQwoqcA7DRQ=s160-c-k-c0x00ffffff-no-rj" class="right-logo" alt="Logo">
+        </div>
     </header>
 
     <div class="container">
@@ -287,7 +488,7 @@
             
             <div class="section-title">
                 Active Research Modules
-                <span class="count">4 Selected Projects</span>
+                <span class="count">5 Selected Projects</span>
             </div>
 
             <!-- PROJECT 1: GOLD FAIR VALUE (Pricing) -->
@@ -313,7 +514,7 @@
                 </div>
             </article>
 
-            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+            <hr>
 
             <!-- PROJECT 2: TELEMETRY & TERMINAL -->
             <article class="project-card">
@@ -338,7 +539,7 @@
                 </div>
             </article>
 
-            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+            <hr>
 
             <!-- PROJECT 3: ML PREDICTION -->
             <article class="project-card">
@@ -363,7 +564,7 @@
                 </div>
             </article>
 
-            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
+            <hr>
 
             <!-- PROJECT 4: INDEX CONSTRUCTION -->
             <article class="project-card">
@@ -387,41 +588,42 @@
                 </div>
             </article>
 
-        </main>
+            <hr>
+
+            <!-- PROJECT 5: NIFTY 500 ANALYSER (Fixed Position & Content) -->
             <article class="project-card">
-                <div class="project-icon">Au</div>
+                <div class="project-icon">N5</div>
                 <div class="project-content">
                     <div class="project-header">
-                        <h2>AnsCom Terminal NIFTY-500 Stocks Analyser</h2>
+                        <h2>AnsCom Terminal NIFTY-500 Analyser</h2>
                         <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="repo-btn-big" target="_blank">
                             <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Visit Repository
                         </a>
                     </div>
-                    <div class="project-meta">PRICING INFRASTRUCTURE • India NSE • Completed on 20 Sept 2024</div>
+                    <div class="project-meta">SCREENING INFRASTRUCTURE • INDIA NSE • DEPLOYED SEPT 2024</div>
                     <div class="project-desc">
-                        A live terminal that approximates the ICICI Prudential Gold ETF (GOLDIETF) price after NSE market hours. Utilizes real-time XAUUSD (Global Spot) and USDINR feeds to calculate fair-value gaps for next-day open.
+                        Advanced screening module integrated into the AnsCom Terminal. Scans all NIFTY-500 stocks to identify volatile movers, structural breakouts, and liquidity voids. Includes automated gainers/losers sorting and heatmaps.
                     </div>
                     <div class="pipeline-nav">
-                        <a href="#">Gap Analysis</a>
-                        <a href="#">Currency Hedge</a>
-                        <a href="#">Forensic Pricing</a>
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine">Source Code</a>
+                        <a href="#">Market Screening</a>
+                        <a href="#">Technical Filters</a>
+                        <a href="#">Trend Analysis</a>
+                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos">Source Code</a>
                     </div>
                 </div>
             </article>
 
-            <hr style="border: 0; border-top: 1px solid #f0f0f0; margin: 30px 0;">
-
+        </main>
 
         <!-- RIGHT SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-box">
                 <div class="sidebar-header">About the Suite</div>
-                <p class="sidebar-text" style="font-weight: 500; color: #111;">
+                <p class="sidebar-text" style="font-weight: 500; color: var(--text-black);">
                     Built quantitative research infrastructure for fair-value pricing, telemetry analytics, and ML time-series modeling in Indian capital markets.
                 </p>
                 <p class="sidebar-text">
-                    This portfolio separates the quantitative signal processing and infrastructure tools from general utility projects, focusing on financial engineering. The site may not be updated. We request you to visit the github PC5518 Aditya Narayan Singh
+                    This portfolio separates the quantitative signal processing and infrastructure tools from general utility projects, focusing on financial engineering. The site may not be updated. We request you to visit the github PC5518 Aditya Narayan Singh.
                 </p>
             </div>
 
@@ -439,7 +641,7 @@
 
             <div class="sidebar-box">
                 <div class="sidebar-header">Focus Areas</div>
-                <ul style="padding-left: 20px; font-size: 14px; color: #444;">
+                <ul style="padding-left: 20px; font-size: 14px; color: var(--text-light);">
                     <li>Post-Market Fair Value</li>
                     <li>Architectural Skeptism</li>
                     <li>Network Telemetry</li>
@@ -451,6 +653,16 @@
         </aside>
 
     </div>
+
+    <script>
+        function setTheme(themeName) {
+            if (themeName === 'light') {
+                document.body.removeAttribute('data-theme');
+            } else {
+                document.body.setAttribute('data-theme', themeName);
+            }
+        }
+    </script>
 
 </body>
 </html>
