@@ -26,6 +26,12 @@
             --nav-bg: #f4f4f4;
             --marquee-bg: #111;
             --marquee-text: #fff;
+            
+            /* Status Badge Colors (Light) */
+            --badge-bg: #f0f0f0;
+            --badge-text: #333;
+            --live-red: #d93025;
+            --live-bg: #fce8e6;
         }
 
         /* THEME OVERRIDES */
@@ -42,6 +48,12 @@
             --icon-bg: #2d2d2d;
             --nav-bg: #2d2d2d;
             --marquee-bg: #000;
+            
+            /* Status Badge Colors (Dark) */
+            --badge-bg: #333;
+            --badge-text: #eee;
+            --live-red: #ff5252;
+            --live-bg: #3e1b1b;
         }
 
         [data-theme="blue"] {
@@ -57,6 +69,11 @@
             --icon-bg: #334155;
             --nav-bg: #334155;
             --marquee-bg: #020617;
+            
+            --badge-bg: #2d3748;
+            --badge-text: #fff;
+            --live-red: #fc8181;
+            --live-bg: #4c2d30;
         }
 
         [data-theme="high-contrast"] {
@@ -73,6 +90,11 @@
             --nav-bg: #000;
             --marquee-bg: #fff;
             --marquee-text: #000;
+            
+            --badge-bg: #000;
+            --badge-text: #fff;
+            --live-red: #f00;
+            --live-bg: #fff;
         }
         
         [data-theme="low-contrast"] {
@@ -88,13 +110,20 @@
             --icon-bg: #eee8d5;
             --nav-bg: #eee8d5;
             --marquee-bg: #4a4a4a;
+            
+            --badge-bg: #e6e1d3;
+            --badge-text: #555;
+            --live-red: #c75c5c;
+            --live-bg: #eee;
         }
 
         /* High Contrast Specific Borders */
         [data-theme="high-contrast"] .project-card, 
         [data-theme="high-contrast"] .sidebar-box,
         [data-theme="high-contrast"] nav a,
-        [data-theme="high-contrast"] .project-icon {
+        [data-theme="high-contrast"] .project-icon,
+        [data-theme="high-contrast"] .status-pill,
+        [data-theme="high-contrast"] .live-tag {
             border: 2px solid #fff !important;
         }
         [data-theme="high-contrast"] .repo-btn-big {
@@ -298,6 +327,7 @@
             gap: 20px;
             align-items: flex-start;
             background-color: var(--card-bg);
+            position: relative;
         }
 
         .project-icon {
@@ -316,6 +346,52 @@
         }
 
         .project-content { flex-grow: 1; }
+
+        /* NEW STATUS BAR */
+        .status-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .status-pill {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            background-color: var(--badge-bg);
+            color: var(--badge-text);
+            border-radius: 4px;
+            letter-spacing: 0.5px;
+            border: 1px solid var(--border-color);
+        }
+
+        .live-tag {
+            display: flex;
+            align-items: center;
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--live-red);
+            background-color: var(--live-bg);
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .blink-dot {
+            width: 6px;
+            height: 6px;
+            background-color: var(--live-red);
+            border-radius: 50%;
+            margin-right: 6px;
+            animation: blinker 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            box-shadow: 0 0 5px var(--live-red);
+        }
+
+        @keyframes blinker {
+            50% { opacity: 0; transform: scale(0.8); }
+        }
 
         .project-header {
             display: flex;
@@ -431,6 +507,7 @@
             .sidebar { border-top: 1px solid var(--border-color); padding-top: 30px; }
             .project-header { flex-direction: column; gap: 10px; }
             .project-header h2 { max-width: 100%; }
+            .status-row { flex-wrap: wrap; }
         }
 
     </style>
@@ -495,6 +572,12 @@
             <article class="project-card">
                 <div class="project-icon">Au</div>
                 <div class="project-content">
+                    <div class="status-row">
+                        <span class="status-pill">Module Construction Completed</span>
+                        <div class="live-tag">
+                            <div class="blink-dot"></div> Live Pricing
+                        </div>
+                    </div>
                     <div class="project-header">
                         <h2>Gold ETF Fair Value Engine</h2>
                         <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="repo-btn-big" target="_blank">
@@ -520,6 +603,12 @@
             <article class="project-card">
                 <div class="project-icon">Tx</div>
                 <div class="project-content">
+                    <div class="status-row">
+                        <span class="status-pill">System Stable</span>
+                        <div class="live-tag">
+                            <div class="blink-dot"></div> Live Telemetry
+                        </div>
+                    </div>
                     <div class="project-header">
                         <h2>AnsCom Terminal & netDepth</h2>
                         <a href="https://github.com/PC5518/ansCom-terminal-equity-marketos" class="repo-btn-big" target="_blank">
@@ -545,6 +634,12 @@
             <article class="project-card">
                 <div class="project-icon">ML</div>
                 <div class="project-content">
+                    <div class="status-row">
+                        <span class="status-pill">Model Construction Completed</span>
+                        <div class="live-tag">
+                            <div class="blink-dot"></div> Active Inference
+                        </div>
+                    </div>
                     <div class="project-header">
                         <h2>ZENTEC Stock Prediction</h2>
                         <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="repo-btn-big" target="_blank">
@@ -570,6 +665,12 @@
             <article class="project-card">
                 <div class="project-icon">Ix</div>
                 <div class="project-content">
+                    <div class="status-row">
+                        <span class="status-pill">Index Rebalanced</span>
+                        <div class="live-tag">
+                            <div class="blink-dot"></div> Live Ticks
+                        </div>
+                    </div>
                     <div class="project-header">
                         <h2>AnsCom AI10 Tech Index</h2>
                         <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="repo-btn-big" target="_blank">
@@ -590,10 +691,16 @@
 
             <hr>
 
-            <!-- PROJECT 5: NIFTY 500 ANALYSER (Fixed Position & Content) -->
+            <!-- PROJECT 5: NIFTY 500 ANALYSER -->
             <article class="project-card">
                 <div class="project-icon">N5</div>
                 <div class="project-content">
+                    <div class="status-row">
+                        <span class="status-pill">Module Construction Completed</span>
+                        <div class="live-tag">
+                            <div class="blink-dot"></div> Live Scanner
+                        </div>
+                    </div>
                     <div class="project-header">
                         <h2>AnsCom Terminal NIFTY-500 Analyser</h2>
                         <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="repo-btn-big" target="_blank">
